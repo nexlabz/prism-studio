@@ -1,0 +1,2836 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PRISM — Design System Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link id="gf-sans" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link id="gf-serif" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   DESIGN TOKENS
+════════════════════════════════════════ */
+:root {
+  --bg:#ede5f8; --fg:#1a0835;
+  --primary:#b08aec; --primary-hover:#8c4de8;
+  --secondary:#7b4fcc; --accent:#4b2280; --accent2:#d859f5;
+  --muted:rgba(26,8,53,.5); --muted-bg:rgba(26,8,53,.06);
+  --border:#1a0835; --border-sub:rgba(26,8,53,.15);
+  --surface:rgba(255,255,255,.5);
+  --c1:#e8c828; --c2:#a87dd4; --c3:#cc44d8; --c4:#5898d4;
+  --c5:#f07898; --c6:#38c888; --c7:#f07840; --c8:#c0b0f0;
+  --success:#22c55e; --warning:#f59e0b; --error:#ef4444; --info:#3b82f6;
+  --font-sans:'Syne',sans-serif; --font-serif:'Lora',Georgia,serif;
+  --font-mono:'JetBrains Mono','Courier New',monospace;
+  --sz:16px; --wt-h:800; --wt-b:400; --lh:1.65; --ls:-.01em;
+  --r-xs:.25rem; --r-sm:.5rem; --r-md:.75rem; --r-lg:1.25rem;
+  --r-xl:1.75rem; --r-2xl:2.5rem; --r-full:9999px; --bw:2px;
+  --px:5rem; --py:4rem; --gap:1.5rem;
+  --sh-sm:0 1px 4px rgba(0,0,0,.08); --sh-md:0 4px 16px rgba(0,0,0,.12);
+  --sh-lg:0 12px 40px rgba(0,0,0,.16); --sh-xl:0 24px 64px rgba(0,0,0,.2);
+  --sh-col:rgba(176,138,236,.3);
+  --blur:0px; --glass-bg:rgba(255,255,255,.08); --grad-angle:135deg;
+  --tx-f:150ms ease-in-out; --tx-m:300ms ease-in-out;
+  --tx-s:500ms cubic-bezier(.34,1,.64,1);
+  --toolbar-h:56px; --subnav-h:48px;
+  --input-radius:var(--r-md); --input-bw:var(--bw);
+  --input-bg:var(--surface); --input-border-col:var(--border-sub);
+  --input-focus-shadow:0 0 0 3px var(--sh-col);
+  --btn-radius:var(--r-full);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:var(--sz);scroll-behavior:smooth;
+  scroll-padding-top:calc(var(--toolbar-h) + var(--subnav-h) + 12px)}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-sans);
+  -webkit-font-smoothing:antialiased;transition:background var(--tx-m),color var(--tx-m)}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit;outline:none}
+/* ════════════════════════════════════════
+   DARK MODE
+════════════════════════════════════════ */
+body.dark-mode {
+  --bg:#0f0c17; --fg:#ede5f8;
+  --primary:#b08aec; --primary-hover:#c9a5ff;
+  --secondary:#7b4fcc; --accent:#d4b8ff; --accent2:#d859f5;
+  --border:rgba(237,229,248,.25); --border-sub:rgba(237,229,248,.1);
+  --surface:rgba(255,255,255,.05); --muted-bg:rgba(255,255,255,.04);
+  --muted:rgba(237,229,248,.5);
+  --sh-sm:0 1px 4px rgba(0,0,0,.4); --sh-md:0 4px 16px rgba(0,0,0,.5);
+  --sh-lg:0 12px 40px rgba(0,0,0,.6); --sh-xl:0 24px 64px rgba(0,0,0,.7);
+  --input-bg:rgba(255,255,255,.06); --input-border-col:rgba(237,229,248,.15);
+}
+body.dark-mode #toolbar { background:#1a0f2e }
+body.dark-mode #subnav { background:#0f0c17 }
+body.dark-mode .code-block { background:#1a0f2e; color:#ede5f8 }
+body.dark-mode .select { background:var(--input-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23ede5f8' opacity='.4'/%3E%3C/svg%3E") no-repeat right .9rem center }
+/* Theme toggle FAB */
+#theme-fab{position:fixed;bottom:1.75rem;right:1.75rem;z-index:400;
+  background:var(--fg);color:var(--bg);border:none;
+  width:3.2rem;height:3.2rem;border-radius:50%;
+  font-size:1.1rem;cursor:pointer;box-shadow:var(--sh-xl);
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--tx-m),color var(--tx-m),transform var(--tx-s);
+  flex-direction:column;gap:.05rem}
+#theme-fab:hover{transform:scale(1.1) rotate(-10deg)}
+#theme-fab .fab-label{font-size:.38rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;line-height:1}
+
+body.cursor-none *{cursor:none!important}
+
+/* ════════════════════════════════════════
+   CURSOR DOT FOLLOWER
+════════════════════════════════════════ */
+#cursor-dot{position:fixed;width:14px;height:14px;border-radius:50%;
+  background:var(--primary);pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);display:none;mix-blend-mode:multiply;
+  transition:transform .1s,background var(--tx-m)}
+#cursor-ring{position:fixed;width:36px;height:36px;border-radius:50%;
+  border:2px solid var(--primary);pointer-events:none;z-index:9998;
+  transform:translate(-50%,-50%);display:none;opacity:.5;
+  transition:left .15s ease-out,top .15s ease-out,background var(--tx-m)}
+#cursor-pixel{position:fixed;width:16px;height:16px;
+  background:var(--primary);pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);display:none;image-rendering:pixelated;
+  clip-path:polygon(4px 0,12px 0,12px 4px,16px 4px,16px 12px,12px 12px,12px 16px,4px 16px,4px 12px,0 12px,0 4px,4px 4px)}
+
+/* ════════════════════════════════════════
+   TOOLBAR
+════════════════════════════════════════ */
+#toolbar{position:sticky;top:0;z-index:200;height:var(--toolbar-h);
+  background:var(--fg);color:var(--bg);
+  display:flex;align-items:center;gap:.75rem;
+  padding:0 var(--px);border-bottom:1px solid rgba(255,255,255,.1);
+  transition:background var(--tx-m)}
+.tb-logo{font-weight:900;font-size:1.1rem;letter-spacing:.1em;text-transform:uppercase;flex-shrink:0}
+.tb-logo span{opacity:.4;font-weight:400;font-size:.6rem;display:block;letter-spacing:.15em;margin-top:-2px;text-transform:uppercase}
+.tb-sep{width:1px;height:1.5rem;background:rgba(255,255,255,.15);flex-shrink:0}
+.tb-spacer{flex:1}
+.tb-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:inherit;padding:.35rem .85rem;border-radius:var(--r-full);
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  cursor:pointer;transition:background var(--tx-f);white-space:nowrap}
+.tb-btn:hover{background:rgba(255,255,255,.18)}
+.tb-btn.active{background:var(--primary);border-color:var(--primary);color:#fff}
+.tb-icon{width:2.1rem;height:2.1rem;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);
+  color:inherit;display:flex;align-items:center;justify-content:center;
+  font-size:.9rem;cursor:pointer;transition:background var(--tx-f);flex-shrink:0}
+.tb-icon:hover{background:rgba(255,255,255,.2)}
+.tb-icon.active{background:var(--primary);border-color:var(--primary)}
+.tb-export{background:var(--primary);border:none;color:#fff;
+  padding:.35rem 1rem;border-radius:var(--r-full);font-size:.68rem;font-weight:800;
+  text-transform:uppercase;letter-spacing:.1em;cursor:pointer;transition:background var(--tx-f)}
+.tb-export:hover{background:var(--primary-hover)}
+
+/* ════════════════════════════════════════
+   STICKY SUBNAV
+════════════════════════════════════════ */
+#subnav{position:sticky;top:var(--toolbar-h);z-index:190;
+  height:var(--subnav-h);background:var(--bg);
+  border-bottom:1px solid var(--border-sub);
+  display:flex;align-items:center;gap:.5rem;
+  padding:0 var(--px);overflow-x:auto;
+  transition:background var(--tx-m),border-color var(--tx-m)}
+#subnav::-webkit-scrollbar{height:0}
+.snav-pill{display:inline-flex;align-items:center;padding:.35rem 1rem;
+  border-radius:var(--r-full);border:1.5px solid transparent;
+  font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  cursor:pointer;white-space:nowrap;color:var(--fg);opacity:.5;
+  transition:all var(--tx-f);background:transparent}
+.snav-pill:hover{opacity:.8;background:var(--muted-bg)}
+.snav-pill.active{opacity:1;background:var(--fg);color:var(--bg);border-color:var(--fg)}
+
+/* ════════════════════════════════════════
+   SETTINGS DRAWER
+════════════════════════════════════════ */
+#drawer{position:fixed;top:0;right:0;height:100vh;width:320px;
+  background:var(--fg);color:var(--bg);z-index:300;
+  display:flex;flex-direction:column;
+  transform:translateX(100%);transition:transform .4s cubic-bezier(.16,1,.3,1);
+  box-shadow:-8px 0 48px rgba(0,0,0,.3)}
+#drawer.open{transform:translateX(0)}
+.dw-head{padding:1.1rem 1.4rem .8rem;border-bottom:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.dw-title{font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.12em;opacity:.8}
+.dw-close{background:none;border:none;color:inherit;font-size:1.2rem;opacity:.4;cursor:pointer;transition:opacity var(--tx-f);padding:0}
+.dw-close:hover{opacity:1}
+.dw-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;overflow-x:auto}
+.dw-tabs::-webkit-scrollbar{height:0}
+.dw-tab{flex:1;padding:.55rem .3rem;font-size:.55rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;background:none;border:none;color:inherit;opacity:.4;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all var(--tx-f);white-space:nowrap;min-width:0}
+.dw-tab.active{opacity:1;border-bottom-color:var(--primary)}
+.dw-body{flex:1;overflow-y:auto;padding:1.1rem 1.4rem}
+.dw-body::-webkit-scrollbar{width:3px}
+.dw-body::-webkit-scrollbar-thumb{background:rgba(255,255,255,.15);border-radius:2px}
+.dw-sec{margin-bottom:1.3rem}
+.dw-sec-title{font-size:.57rem;text-transform:uppercase;letter-spacing:.16em;opacity:.35;font-weight:700;margin-bottom:.65rem}
+.dw-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:.55rem;gap:.6rem}
+.dw-label{font-size:.67rem;font-weight:600;opacity:.72;flex:1;min-width:0}
+.dw-color{width:1.8rem;height:1.8rem;border-radius:.3rem;border:1.5px solid rgba(255,255,255,.18);
+  overflow:hidden;position:relative;cursor:pointer;flex-shrink:0;display:block}
+.dw-color input[type=color]{position:absolute;inset:-4px;width:calc(100% + 8px);height:calc(100% + 8px);border:none;cursor:pointer;background:none;padding:0}
+.dw-sw{display:flex;align-items:center;gap:.45rem;flex-shrink:0}
+.dw-sl{-webkit-appearance:none;width:82px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;outline:none;cursor:pointer}
+.dw-sl::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#fff;cursor:pointer;border:2px solid rgba(0,0,0,.2)}
+.dw-val{font-size:.58rem;opacity:.45;min-width:2.8rem;text-align:right;font-variant-numeric:tabular-nums}
+.dw-select{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);color:inherit;
+  padding:.3rem .45rem;border-radius:.3rem;font-size:.62rem;font-weight:600;cursor:pointer;flex-shrink:0;max-width:130px}
+.dw-sep{border:none;border-top:1px solid rgba(255,255,255,.07);margin:.9rem 0}
+.dw-cg{display:grid;grid-template-columns:1fr 1fr;gap:.45rem}
+.dw-ci{display:flex;align-items:center;gap:.4rem}
+.dw-ci .dw-label{font-size:.6rem}
+.dw-reset{width:100%;padding:.6rem;border-radius:.45rem;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.1);color:inherit;font-family:var(--font-sans);
+  font-weight:700;font-size:.62rem;text-transform:uppercase;letter-spacing:.1em;
+  cursor:pointer;transition:background var(--tx-f);margin-top:.4rem}
+.dw-reset:hover{background:rgba(255,255,255,.16)}
+/* Radio group */
+.dw-radio-group{display:flex;flex-wrap:wrap;gap:.35rem;margin-bottom:.55rem}
+.dw-radio{padding:.3rem .65rem;border-radius:var(--r-full);border:1px solid rgba(255,255,255,.2);
+  font-size:.58rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  cursor:pointer;transition:all var(--tx-f);opacity:.5}
+.dw-radio.active{background:var(--primary);border-color:var(--primary);opacity:1;color:#fff}
+
+/* Preset grid */
+.preset-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem}
+.preset-card{border-radius:.75rem;border:1.5px solid rgba(255,255,255,.12);
+  overflow:hidden;cursor:pointer;transition:all var(--tx-f)}
+.preset-card:hover{border-color:rgba(255,255,255,.4);transform:translateY(-2px)}
+.preset-card.active{border-radius:0;border:2.5px solid var(--primary);box-shadow:inset 0 0 0 1px var(--primary),4px 4px 0 var(--primary)}
+.preset-thumb{height:52px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:2px;padding:2px}
+.preset-thumb div{border-radius:2px}
+.preset-info{padding:.45rem .55rem}
+.preset-name{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+.preset-desc{font-size:.52rem;opacity:.45;margin-top:.1rem}
+
+/* ════════════════════════════════════════
+   EXPORT MODAL
+════════════════════════════════════════ */
+#export-modal{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);
+  backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;padding:2rem}
+#export-modal.show{display:flex}
+.em-box{background:var(--fg);color:var(--bg);border-radius:var(--r-xl);
+  width:100%;max-width:700px;max-height:82vh;overflow:hidden;display:flex;flex-direction:column}
+.em-head{padding:1.3rem 1.8rem .9rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.em-title{font-weight:900;font-size:1rem;text-transform:uppercase;letter-spacing:.06em}
+.em-close{background:none;border:none;color:inherit;font-size:1.3rem;opacity:.4;cursor:pointer;transition:opacity var(--tx-f)}
+.em-close:hover{opacity:1}
+.em-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.1);padding:0 1.8rem;flex-shrink:0}
+.em-tab{padding:.6rem 1rem;font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;background:none;border:none;color:inherit;opacity:.4;cursor:pointer;
+  border-bottom:2px solid transparent;transition:all var(--tx-f)}
+.em-tab.active{opacity:1;border-bottom-color:var(--primary)}
+.em-body{flex:1;overflow-y:auto;padding:1.3rem 1.8rem}
+.em-code{background:rgba(0,0,0,.45);border-radius:var(--r-md);padding:1.1rem 1.3rem;
+  font-family:var(--font-mono);font-size:.7rem;line-height:1.7;white-space:pre;overflow-x:auto;max-height:48vh;overflow-y:auto}
+.em-foot{display:flex;gap:.65rem;padding:.9rem 1.8rem;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0}
+.em-btn{padding:.5rem 1.1rem;border-radius:var(--r-full);border:none;
+  background:var(--primary);color:#fff;font-family:var(--font-sans);font-weight:800;
+  font-size:.68rem;text-transform:uppercase;letter-spacing:.08em;cursor:pointer;transition:background var(--tx-f)}
+.em-btn:hover{background:var(--primary-hover)}
+.em-btn.copied{background:var(--success)}
+
+/* ════════════════════════════════════════
+   PAGE
+════════════════════════════════════════ */
+section{padding:var(--py) var(--px);border-top:1px solid var(--border-sub)}
+.sec-header{margin-bottom:2.25rem}
+.sec-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.16em;opacity:.38;margin-bottom:.3rem}
+.sec-title{font-family:var(--font-sans);font-weight:var(--wt-h);font-size:clamp(1.9rem,4vw,3.2rem);
+  text-transform:uppercase;letter-spacing:var(--ls);line-height:1;
+  display:inline-flex;align-items:flex-end;gap:.8rem}
+.sec-title::after{content:'';display:inline-block;width:2rem;height:3px;
+  background:var(--primary);margin-bottom:.35rem;border-radius:var(--r-full);transition:background var(--tx-m)}
+.sec-desc{font-family:var(--font-serif);font-size:.92rem;line-height:var(--lh);opacity:.68;max-width:540px;margin-top:.65rem}
+.glbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.38;margin-bottom:.55rem;margin-top:1.5rem}
+.glbl:first-child{margin-top:0}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--gap)}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--gap)}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--gap)}
+.row{display:flex;flex-wrap:wrap;gap:var(--gap);align-items:flex-start}
+.flex-c{display:flex;align-items:center}
+.flex-b{display:flex;align-items:center;justify-content:space-between}
+
+/* ════════════════════════════════════════
+   HERO
+════════════════════════════════════════ */
+.hero{padding:calc(var(--py)*1.4) var(--px) var(--py)}
+.hero-eye{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.2em;opacity:.45;margin-bottom:.9rem}
+.hero-h{font-family:var(--font-sans);font-weight:900;
+  font-size:clamp(4rem,12vw,10rem);text-transform:uppercase;
+  letter-spacing:var(--ls);line-height:.82;margin-bottom:1.4rem}
+.hero-sub{font-family:var(--font-serif);font-size:clamp(.9rem,2vw,1.1rem);
+  line-height:var(--lh);opacity:.65;max-width:540px;margin-bottom:.75rem}
+
+/* ════════════════════════════════════════
+   BUTTONS
+════════════════════════════════════════ */
+.btn{display:inline-flex;align-items:center;gap:.4rem;
+  padding:.58rem 1.35rem;border-radius:var(--btn-radius);border:var(--bw) solid var(--border);
+  font-family:var(--font-sans);font-weight:700;font-size:.76rem;
+  text-transform:uppercase;letter-spacing:.06em;cursor:pointer;
+  transition:all var(--tx-f);white-space:nowrap;line-height:1}
+.btn-filled{background:var(--primary);color:var(--fg)}
+.btn-filled:hover{background:var(--primary-hover);color:#fff;box-shadow:0 4px 14px var(--sh-col)}
+.btn-outline{background:transparent;color:var(--fg)}
+.btn-outline:hover{background:var(--fg);color:var(--bg)}
+.btn-ghost{background:transparent;color:var(--fg);border-color:transparent}
+.btn-ghost:hover{background:var(--muted-bg)}
+.btn-danger{background:var(--error);color:#fff;border-color:var(--error)}
+.btn-danger:hover{filter:brightness(.88)}
+.btn-success{background:var(--success);color:#fff;border-color:var(--success)}
+.btn-gradient{background:linear-gradient(var(--grad-angle),var(--primary),var(--accent2));color:#fff;border:none}
+.btn-gradient:hover{filter:brightness(1.1);box-shadow:0 4px 20px var(--sh-col)}
+.btn-glow{background:var(--primary);color:var(--fg);border-color:var(--primary);
+  box-shadow:0 0 12px var(--sh-col)}
+.btn-glow:hover{box-shadow:0 0 24px var(--sh-col),0 0 48px var(--sh-col);background:var(--primary-hover)}
+.btn-3d{background:var(--primary);color:var(--fg);border-color:var(--border);
+  box-shadow:var(--bw) var(--bw) 0 var(--border),calc(var(--bw)*2) calc(var(--bw)*2) 0 var(--border)}
+.btn-3d:hover{transform:translate(calc(var(--bw)*2),calc(var(--bw)*2));box-shadow:none}
+.btn-underline{background:transparent;border:none;color:var(--fg);text-decoration:underline;text-decoration-thickness:2px;padding:.4rem 0}
+.btn-sm{padding:.35rem .85rem;font-size:.63rem}
+.btn-lg{padding:.72rem 1.9rem;font-size:.86rem}
+.btn-icon{padding:.52rem;width:2.35rem;height:2.35rem;justify-content:center}
+.btn-group{display:inline-flex}
+.btn-group .btn{border-radius:0;border-right-width:0}
+.btn-group .btn:first-child{border-radius:var(--btn-radius) 0 0 var(--btn-radius)}
+.btn-group .btn:last-child{border-radius:0 var(--btn-radius) var(--btn-radius) 0;border-right-width:var(--bw)}
+.btn-loading{opacity:.7;pointer-events:none;overflow:hidden;position:relative}
+.btn-loading::after{content:'';position:absolute;left:-100%;top:0;bottom:0;width:200%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:shimmer 1.2s infinite}
+@keyframes shimmer{to{left:100%}}
+
+/* ════════════════════════════════════════
+   INPUTS
+════════════════════════════════════════ */
+.ig{margin-bottom:1rem}
+.ig label{display:block;font-size:.68rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.08em;opacity:.58;margin-bottom:.38rem}
+.input{width:100%;background:var(--input-bg);
+  border:var(--input-bw) solid var(--input-border-col);
+  border-radius:var(--input-radius);padding:.62rem 1rem;
+  font-family:var(--font-sans);font-size:.85rem;color:var(--fg);
+  outline:none;transition:all var(--tx-f)}
+.input:focus{border-color:var(--primary);box-shadow:var(--input-focus-shadow)}
+.input::placeholder{opacity:.38}
+.input-wrap{position:relative}
+.input-wrap .input{padding-left:2.4rem}
+.input-wrap .input.has-r{padding-right:2.4rem}
+.input-ico{position:absolute;top:50%;transform:translateY(-50%);left:.85rem;opacity:.4;font-size:.9rem;pointer-events:none}
+.input-ico-r{left:auto;right:.85rem}
+/* Style variants */
+.input-underline{border:none!important;border-bottom:var(--bw) solid var(--border)!important;border-radius:0!important;background:transparent!important;padding-left:0!important;padding-right:0!important}
+.input-underline:focus{box-shadow:none!important;border-bottom-color:var(--primary)!important}
+.input-filled{border:none!important;background:var(--muted-bg)!important}
+.input-filled:focus{box-shadow:var(--input-focus-shadow)!important}
+.input-ghost{border:none!important;background:transparent!important;box-shadow:none!important}
+.input-ghost:focus{border-bottom:2px solid var(--primary)!important;border-radius:0!important}
+.input-glow{border-color:var(--primary)!important}
+.input-glow:focus{box-shadow:0 0 0 4px var(--sh-col),0 0 20px var(--sh-col)!important}
+.input-thick{border-width:3px!important}
+.input-thick:focus{border-color:var(--primary)!important;box-shadow:none!important}
+/* Validation states */
+.ig.valid .input{border-color:var(--success)!important}
+.ig.invalid .input{border-color:var(--error)!important}
+.ig .hint{font-size:.68rem;margin-top:.3rem;font-family:var(--font-serif);opacity:.55;transition:color var(--tx-f)}
+.ig.valid .hint{color:var(--success);opacity:1}
+.ig.invalid .hint{color:var(--error);opacity:1}
+.ig .hint::before{content:''}
+.ig.valid .hint::before{content:'✓ '}
+.ig.invalid .hint::before{content:'⚠ '}
+/* Select */
+.select{appearance:none;width:100%;background:var(--input-bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%231a0835' opacity='.4'/%3E%3C/svg%3E") no-repeat right .9rem center;
+  border:var(--bw) solid var(--border-sub);border-radius:var(--input-radius);
+  padding:.62rem 2.5rem .62rem 1rem;font-size:.85rem;color:var(--fg);cursor:pointer;transition:all var(--tx-f)}
+.select:focus{border-color:var(--primary);box-shadow:var(--input-focus-shadow)}
+textarea.input{resize:vertical;min-height:90px;line-height:var(--lh)}
+/* Toggle */
+.toggle-r{display:flex;align-items:center;gap:.65rem;cursor:pointer;user-select:none;margin-bottom:.55rem}
+.toggle-t{width:2.65rem;height:1.45rem;border-radius:var(--r-full);background:var(--border-sub);
+  position:relative;cursor:pointer;transition:background var(--tx-f);flex-shrink:0}
+.toggle-t.on{background:var(--primary)}
+.toggle-k{width:1.05rem;height:1.05rem;border-radius:50%;background:#fff;
+  position:absolute;top:.2rem;left:.2rem;transition:left var(--tx-f);box-shadow:var(--sh-sm)}
+.toggle-t.on .toggle-k{left:1.4rem}
+/* Checkbox/Radio */
+.chk-r{display:flex;align-items:center;gap:.6rem;cursor:pointer;margin-bottom:.5rem;user-select:none}
+.chk-box{width:1.15rem;height:1.15rem;border-radius:var(--r-xs);border:var(--bw) solid var(--border);
+  background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--tx-f)}
+.chk-box.on{background:var(--primary);border-color:var(--primary);color:#fff;font-size:.7rem;font-weight:900;line-height:1}
+.rad-box{width:1.15rem;height:1.15rem;border-radius:50%;border:var(--bw) solid var(--border);
+  background:transparent;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all var(--tx-f)}
+.rad-box.on{border-color:var(--primary)}
+.rad-box.on::after{content:'';width:.48rem;height:.48rem;border-radius:50%;background:var(--primary)}
+/* Range */
+.range-in{-webkit-appearance:none;width:100%;height:4px;border-radius:var(--r-full);background:var(--border-sub);outline:none;cursor:pointer}
+.range-in::-webkit-slider-thumb{-webkit-appearance:none;width:1.1rem;height:1.1rem;border-radius:50%;background:var(--primary);cursor:pointer;box-shadow:var(--sh-sm)}
+
+/* ════════════════════════════════════════
+   CARDS
+════════════════════════════════════════ */
+.card{background:var(--surface);border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);overflow:hidden;transition:transform var(--tx-s),box-shadow var(--tx-m),border-radius var(--tx-m)}
+.card:hover{transform:translateY(-3px);box-shadow:var(--sh-lg)}
+.card-p{padding:1.4rem}
+.stat-card{background:var(--surface);border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);padding:1.4rem;transition:border-radius var(--tx-m)}
+.stat-ico{width:2.4rem;height:2.4rem;border-radius:var(--r-md);background:rgba(0,0,0,.1);
+  display:flex;align-items:center;justify-content:center;font-size:1rem;margin-bottom:.85rem}
+.stat-val{font-size:1.8rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+.stat-lbl{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;opacity:.5;font-weight:700}
+.stat-d{font-size:.7rem;font-weight:700;margin-top:.45rem}
+.stat-d.up{color:var(--success)}.stat-d.dn{color:var(--error)}
+.card-img-wrap{aspect-ratio:16/9;overflow:hidden;position:relative;background:var(--muted-bg)}
+.card-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:2rem;transition:transform var(--tx-s)}
+.card:hover .card-img-ph{transform:scale(1.05)}
+.card-tag{display:inline-flex;padding:.22rem .65rem;border-radius:var(--r-full);
+  font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:.7rem;background:rgba(0,0,0,.12)}
+.card-title{font-weight:900;font-size:.98rem;text-transform:uppercase;letter-spacing:var(--ls);margin-bottom:.45rem;line-height:1.1}
+.card-body{font-family:var(--font-serif);font-size:.82rem;line-height:1.6;opacity:.72}
+.card-ft{padding:.9rem 1.4rem;border-top:1px solid var(--border-sub);display:flex;align-items:center;justify-content:space-between}
+/* Pricing */
+.price-card{background:var(--surface);border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);padding:1.6rem;position:relative;overflow:hidden;transition:border-radius var(--tx-m)}
+.price-card.feat{background:var(--fg);color:var(--bg)}
+.price-badge{position:absolute;top:1.1rem;right:1.1rem;background:var(--primary);color:var(--fg);
+  font-size:.52rem;font-weight:900;text-transform:uppercase;letter-spacing:.1em;padding:.22rem .55rem;border-radius:var(--r-full)}
+.price-plan{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;opacity:.55;margin-bottom:.45rem}
+.price-amt{font-size:2.6rem;font-weight:900;line-height:1;margin-bottom:.2rem}
+.price-per{font-size:.7rem;opacity:.45;margin-bottom:1.1rem}
+.price-list{list-style:none;margin-bottom:1.4rem}
+.price-list li{font-family:var(--font-serif);font-size:.8rem;padding:.32rem 0;border-bottom:1px solid rgba(128,128,128,.1);display:flex;align-items:center;gap:.45rem}
+.price-list li::before{content:'✓';font-size:.7rem;color:var(--success);font-weight:900;flex-shrink:0}
+/* Testimonial */
+.testi{background:var(--surface);border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);padding:1.6rem;transition:border-radius var(--tx-m)}
+.testi-q{font-family:var(--font-serif);font-size:1rem;line-height:1.65;margin-bottom:1.1rem;font-style:italic}
+.testi-author{display:flex;align-items:center;gap:.7rem}
+.ava{display:flex;align-items:center;justify-content:center;border-radius:50%;background:var(--primary);font-weight:900;font-size:.78rem;color:#fff;flex-shrink:0;border:2px solid var(--border)}
+.ava-sm{width:2.2rem;height:2.2rem;font-size:.65rem}
+.ava-md{width:2.8rem;height:2.8rem;font-size:.82rem}
+.ava-lg{width:3.5rem;height:3.5rem;font-size:1.05rem}
+.ava-stack{display:flex}
+.ava-stack .ava{margin-left:-.55rem;border:2px solid var(--bg)}
+.ava-stack .ava:first-child{margin-left:0}
+.ava-name{font-weight:800;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em}
+.ava-role{font-size:.68rem;opacity:.45;margin-top:.1rem}
+
+/* ════════════════════════════════════════
+   NAVIGATION COMPONENTS
+════════════════════════════════════════ */
+.nav-tabs-demo{display:flex;border-bottom:var(--bw) solid var(--border-sub)}
+.ntab{padding:.62rem 1.2rem;font-size:.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.07em;cursor:pointer;border-bottom:var(--bw) solid transparent;
+  margin-bottom:calc(-1 * var(--bw));transition:all var(--tx-f);opacity:.45}
+.ntab.active{opacity:1;border-bottom-color:var(--primary)}
+.ntab:hover:not(.active){opacity:.72}
+.tab-body{padding:1.1rem 0;font-family:var(--font-serif);font-size:.88rem;line-height:var(--lh)}
+.bcrumb{display:flex;align-items:center;gap:.4rem;font-size:.7rem;font-weight:700;flex-wrap:wrap}
+.bc-i{opacity:.45;text-transform:uppercase;letter-spacing:.06em}
+.bc-i.active{opacity:1}
+.bc-s{opacity:.3}
+.pagi{display:flex;align-items:center;gap:.38rem}
+.pg-btn{width:2.1rem;height:2.1rem;border-radius:var(--r-md);border:var(--bw) solid var(--border-sub);
+  background:transparent;color:var(--fg);font-size:.76rem;font-weight:700;
+  display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all var(--tx-f)}
+.pg-btn.active{background:var(--primary);border-color:var(--primary)}
+.pg-btn:hover:not(.active):not(:disabled){border-color:var(--primary)}
+.pg-btn:disabled{opacity:.28;cursor:default}
+.side-nav{background:var(--surface);border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);padding:.8rem;width:190px;transition:border-radius var(--tx-m)}
+.s-nav-i{display:flex;align-items:center;gap:.6rem;padding:.55rem .75rem;border-radius:var(--r-md);
+  font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;cursor:pointer;transition:all var(--tx-f);opacity:.55}
+.s-nav-i.active{background:var(--primary);opacity:1;color:var(--fg)}
+.s-nav-i:hover:not(.active){background:var(--muted-bg);opacity:1}
+.s-nav-ico{font-size:.95rem;width:1.4rem;text-align:center}
+.dd-wrap{position:relative;display:inline-block}
+.dd-menu{position:absolute;top:calc(100% + .45rem);left:0;background:var(--fg);color:var(--bg);
+  border-radius:var(--r-lg);min-width:170px;overflow:hidden;box-shadow:var(--sh-xl);
+  z-index:50;border:1px solid rgba(255,255,255,.1);display:none}
+.dd-menu.show{display:block}
+.dd-i{padding:.62rem 1rem;font-size:.75rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:.05em;cursor:pointer;transition:background var(--tx-f);display:flex;align-items:center;gap:.55rem}
+.dd-i:hover{background:rgba(255,255,255,.1)}
+.dd-i.danger{color:var(--error)}
+.dd-sep{height:1px;background:rgba(255,255,255,.08);margin:.22rem 0}
+
+/* ════════════════════════════════════════
+   FEEDBACK
+════════════════════════════════════════ */
+.alert{border-radius:var(--r-lg);padding:.9rem 1.15rem;border:var(--bw) solid;
+  display:flex;align-items:flex-start;gap:.7rem;margin-bottom:.65rem}
+.alert-info{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3)}
+.alert-success{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3)}
+.alert-warning{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.3)}
+.alert-error{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3)}
+.alert-ico{font-size:1.05rem;flex-shrink:0;margin-top:.05rem}
+.alert-title{font-weight:800;font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.18rem}
+.alert-body{font-family:var(--font-serif);font-size:.8rem;line-height:1.5;opacity:.78}
+.badge{display:inline-flex;align-items:center;gap:.28rem;padding:.22rem .62rem;
+  border-radius:var(--r-full);font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em}
+.badge-primary{background:var(--primary);color:var(--fg)}
+.badge-success{background:rgba(34,197,94,.15);color:var(--success);border:1px solid rgba(34,197,94,.3)}
+.badge-error{background:rgba(239,68,68,.15);color:var(--error);border:1px solid rgba(239,68,68,.3)}
+.badge-warning{background:rgba(245,158,11,.15);color:var(--warning);border:1px solid rgba(245,158,11,.3)}
+.badge-outline{background:transparent;border:var(--bw) solid var(--border);color:var(--fg)}
+.prog-wrap{margin-bottom:.9rem}
+.prog-lr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.38rem}
+.prog-lbl{font-size:.7rem;font-weight:700}
+.prog-pct{font-size:.7rem;opacity:.45}
+.prog-track{height:8px;background:var(--muted-bg);border-radius:var(--r-full);overflow:hidden;border:1px solid var(--border-sub)}
+.prog-bar{height:100%;border-radius:var(--r-full);background:var(--primary);transition:width .8s var(--tx-s)}
+.prog-wrap.sm .prog-track{height:4px}
+.prog-wrap.lg .prog-track{height:14px}
+.spin{width:2rem;height:2rem;border-radius:50%;border:3px solid var(--border-sub);
+  border-top-color:var(--primary);animation:spin .8s linear infinite;display:inline-block}
+.spin.sm{width:1.2rem;height:1.2rem;border-width:2px}
+.spin.lg{width:3rem;height:3rem;border-width:4px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.skel{background:linear-gradient(90deg,var(--muted-bg) 25%,rgba(128,128,128,.08) 50%,var(--muted-bg) 75%);
+  background-size:200% 100%;animation:skl 1.5s infinite;border-radius:var(--r-sm)}
+@keyframes skl{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.skel-line{height:.72rem;margin-bottom:.45rem;border-radius:var(--r-full)}
+.toast{background:var(--fg);color:var(--bg);border-radius:var(--r-lg);
+  padding:.85rem 1.15rem;display:flex;align-items:center;gap:.7rem;
+  box-shadow:var(--sh-xl);border:1px solid rgba(255,255,255,.1);max-width:340px;font-size:.8rem}
+.toast-ico{font-size:1.15rem;flex-shrink:0}
+.toast-msg{flex:1;font-weight:600}
+.toast-x{opacity:.4;cursor:pointer;font-size:.95rem;background:none;border:none;color:inherit}
+
+/* ════════════════════════════════════════
+   DATA DISPLAY
+════════════════════════════════════════ */
+.tbl-wrap{overflow-x:auto;border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);transition:border-radius var(--tx-m)}
+table{width:100%;border-collapse:collapse;min-width:480px}
+th{background:var(--muted-bg);padding:.7rem .95rem;text-align:left;
+  font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;opacity:.55;border-bottom:var(--bw) solid var(--border-sub)}
+td{padding:.82rem .95rem;font-size:.8rem;border-bottom:1px solid var(--border-sub)}
+tr:last-child td{border-bottom:none}
+tbody tr{transition:background var(--tx-f)}
+tbody tr:hover{background:var(--muted-bg)}
+.td-ava{display:flex;align-items:center;gap:.55rem}
+.tip-wrap{position:relative;display:inline-block}
+.tip{position:absolute;bottom:calc(100% + .45rem);left:50%;transform:translateX(-50%);
+  background:var(--fg);color:var(--bg);font-size:.62rem;font-weight:700;
+  padding:.28rem .62rem;border-radius:var(--r-sm);white-space:nowrap;
+  pointer-events:none;opacity:0;transition:opacity var(--tx-f);z-index:10}
+.tip::after{content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+  border:4px solid transparent;border-top-color:var(--fg)}
+.tip-wrap:hover .tip{opacity:1}
+
+/* ════════════════════════════════════════
+   OVERLAYS
+════════════════════════════════════════ */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);
+  z-index:600;display:flex;align-items:center;justify-content:center;padding:2rem}
+.modal-box{background:var(--bg);border-radius:var(--r-2xl);border:var(--bw) solid var(--border-sub);
+  width:100%;max-width:460px;overflow:hidden;animation:min-in .3s var(--tx-s)}
+@keyframes min-in{from{transform:scale(.95) translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{padding:1.4rem 1.65rem 1rem;display:flex;align-items:flex-start;justify-content:space-between}
+.modal-title{font-weight:900;font-size:1.05rem;text-transform:uppercase;letter-spacing:.04em}
+.modal-x{background:none;border:none;color:var(--fg);opacity:.38;cursor:pointer;font-size:1.15rem;transition:opacity var(--tx-f)}
+.modal-x:hover{opacity:1}
+.modal-body-txt{padding:0 1.65rem 1.1rem;font-family:var(--font-serif);font-size:.88rem;line-height:var(--lh);opacity:.75}
+.modal-foot{padding:.9rem 1.65rem 1.4rem;display:flex;gap:.65rem;justify-content:flex-end}
+
+/* ════════════════════════════════════════
+   INTERACTIONS
+════════════════════════════════════════ */
+/* Hover demos */
+.hover-demo-card{background:var(--surface);border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);
+  padding:1.25rem;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:7rem;cursor:pointer;transition:all .35s cubic-bezier(.34,1,.64,1);text-align:center;position:relative;overflow:hidden}
+.hover-scale:hover{transform:scale(1.06)}
+.hover-lift:hover{transform:translateY(-10px);box-shadow:var(--sh-xl)}
+.hover-glow:hover{box-shadow:0 0 0 2px var(--primary),0 0 30px var(--sh-col),0 0 60px var(--sh-col)}
+.hover-tilt{transform-style:preserve-3d}
+.hover-tilt:hover{transform:perspective(600px) rotateX(-5deg) rotateY(8deg)}
+.hover-bounce:hover{animation:bounce .5s var(--tx-s)}
+@keyframes bounce{0%,100%{transform:translateY(0)}40%{transform:translateY(-14px)}70%{transform:translateY(-6px)}}
+.hover-wiggle:hover{animation:wiggle .4s ease}
+@keyframes wiggle{0%,100%{transform:rotate(0)}20%{transform:rotate(-4deg)}60%{transform:rotate(4deg)}80%{transform:rotate(-2deg)}}
+/* Card edge animations */
+.card-border-spin{position:relative;overflow:hidden}
+.card-border-spin::before{content:'';position:absolute;inset:-2px;border-radius:calc(var(--r-xl) + 2px);
+  background:linear-gradient(var(--grad-angle),var(--primary),var(--accent2),var(--c3),var(--c4),var(--primary));
+  background-size:300% 300%;animation:gradMove 3s ease infinite;z-index:-1}
+@keyframes gradMove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+.card-shimmer{overflow:hidden;position:relative}
+.card-shimmer::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.25) 50%,transparent 60%);
+  background-size:200% 100%;animation:shimmer2 2s infinite}
+@keyframes shimmer2{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.card-pulse{animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 var(--sh-col)}50%{box-shadow:0 0 0 8px transparent}}
+/* Ripple */
+.ripple-btn{position:relative;overflow:hidden}
+.ripple-btn .ripple-wave{position:absolute;border-radius:50%;background:rgba(255,255,255,.3);
+  transform:scale(0);animation:ripple-a .6s linear;pointer-events:none}
+@keyframes ripple-a{to{transform:scale(4);opacity:0}}
+/* Mouse cursor styles applied via body class */
+body.cursor-dot #cursor-dot{display:block}
+body.cursor-dot #cursor-ring{display:block}
+body.cursor-pixel #cursor-pixel{display:block}
+/* Floating interaction demo card */
+.ix-demo{background:var(--surface);border-radius:var(--r-xl);border:var(--bw) solid var(--border-sub);
+  padding:1.4rem;text-align:center;display:flex;flex-direction:column;align-items:center;gap:.75rem;min-height:9rem;justify-content:center;position:relative;overflow:hidden}
+.ix-label{font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.45;margin-bottom:.2rem}
+
+/* ════════════════════════════════════════
+   MOBILE
+════════════════════════════════════════ */
+.phone-frame{width:250px;height:500px;border-radius:2.5rem;background:var(--fg);
+  border:4px solid var(--fg);overflow:hidden;position:relative;box-shadow:var(--sh-xl);flex-shrink:0}
+.phone-screen{width:100%;height:100%;background:var(--bg);overflow:hidden;display:flex;flex-direction:column}
+.msb{height:22px;background:var(--fg);display:flex;align-items:center;justify-content:space-between;padding:0 .9rem;flex-shrink:0}
+.msb-t{color:var(--bg);font-size:.45rem;font-weight:800;opacity:.7}
+.mab{background:var(--surface);border-bottom:1px solid var(--border-sub);
+  padding:.65rem .9rem;display:flex;align-items:center;gap:.55rem;flex-shrink:0}
+.mab-title{font-size:.8rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em;flex:1}
+.mab-ico{width:1.7rem;height:1.7rem;border-radius:50%;background:var(--muted-bg);display:flex;align-items:center;justify-content:center;font-size:.7rem;cursor:pointer}
+.m-content{flex:1;padding:.65rem;overflow:hidden}
+.m-card{background:var(--surface);border-radius:.7rem;border:1px solid var(--border-sub);padding:.65rem;margin-bottom:.45rem;display:flex;align-items:center;gap:.55rem}
+.m-ico{width:1.9rem;height:1.9rem;border-radius:.45rem;display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+.m-text{flex:1;min-width:0}
+.m-title{font-size:.6rem;font-weight:800;text-transform:uppercase;margin-bottom:.08rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.m-sub{font-size:.5rem;opacity:.45;font-family:var(--font-serif)}
+.mbn{height:52px;background:var(--fg);border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;flex-shrink:0}
+.mbn-i{flex:1;display:flex;flex-direction:column;align-items:center;gap:.12rem;cursor:pointer;padding:.45rem 0;opacity:.38;color:var(--bg);transition:opacity var(--tx-f)}
+.mbn-i.active{opacity:1}
+.mbn-i.active .mbn-ico{background:var(--primary)}
+.mbn-ico{width:1.5rem;height:1.5rem;border-radius:var(--r-full);display:flex;align-items:center;justify-content:center;font-size:.72rem;transition:background var(--tx-f)}
+.mbn-lbl{font-size:.37rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
+footer{background:var(--accent);padding:var(--py) var(--px);transition:background var(--tx-m)}
+.ft-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:2.5rem;margin-bottom:2.2rem}
+.ft-logo{font-family:var(--font-serif);font-weight:700;font-style:italic;font-size:1.75rem;color:rgba(255,255,255,.9);margin-bottom:.4rem}
+.ft-tagline{font-size:.6rem;color:rgba(255,255,255,.35);font-weight:700;text-transform:uppercase;letter-spacing:.12em}
+.ft-h{font-size:.58rem;font-weight:800;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.32);margin-bottom:.7rem}
+.ft-a{display:block;color:rgba(255,255,255,.72);font-size:.78rem;font-weight:700;text-transform:uppercase;text-decoration:underline;text-decoration-thickness:1.5px;margin-bottom:.38rem;transition:opacity var(--tx-f)}
+.ft-a:hover{opacity:.6}
+.ft-copy{border-top:1px solid rgba(255,255,255,.1);padding-top:1.1rem;display:flex;justify-content:space-between;align-items:center}
+.ft-copy span{font-size:.6rem;color:rgba(255,255,255,.32);font-weight:700;text-transform:uppercase;letter-spacing:.1em}
+
+/* ════════════════════════════════════════
+   MISC
+════════════════════════════════════════ */
+.swatch-g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1rem}
+.swatch-g8{display:grid;grid-template-columns:repeat(8,1fr);gap:.75rem;margin-bottom:1rem}
+.sw-box{aspect-ratio:1;border-radius:var(--r-lg);border:var(--bw) solid var(--border);margin-bottom:.45rem;position:relative;overflow:hidden;cursor:pointer;transition:transform var(--tx-f),border-radius var(--tx-m)}
+.sw-box:hover{transform:scale(1.05)}
+.sw-box input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.sw-box-sm{aspect-ratio:1;border-radius:var(--r-md);border:var(--bw) solid var(--border);margin-bottom:.35rem;position:relative;overflow:hidden;cursor:pointer;transition:transform var(--tx-f)}
+.sw-box-sm:hover{transform:scale(1.07)}
+.sw-box-sm input[type=color]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.sw-name{font-weight:800;font-size:.62rem;text-transform:uppercase;letter-spacing:.05em;display:block}
+.sw-var{font-family:var(--font-mono);font-size:.55rem;opacity:.38;display:block}
+.sw-name-sm{font-weight:800;font-size:.54rem;text-transform:uppercase;letter-spacing:.04em;display:block}
+.sw-var-sm{font-family:var(--font-mono);font-size:.48rem;opacity:.38;display:block}
+.code-block{background:var(--fg);color:var(--bg);border-radius:var(--r-lg);padding:1.1rem 1.35rem;
+  font-family:var(--font-mono);font-size:.74rem;line-height:1.7;white-space:pre;overflow-x:auto;margin:.85rem 0;transition:background var(--tx-m),color var(--tx-m)}
+.pill{display:inline-flex;align-items:center;padding:.42rem 1.1rem;border-radius:var(--r-full);
+  border:var(--bw) solid var(--border);font-weight:700;font-size:.7rem;
+  text-transform:uppercase;letter-spacing:.07em;cursor:pointer;transition:background var(--tx-f),color var(--tx-f)}
+.pill:hover{background:var(--fg);color:var(--bg)}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-thumb{background:var(--border-sub);border-radius:var(--r-full)}
+</style>
+</head>
+<body>
+
+<!-- CURSOR ELEMENTS -->
+<div id="cursor-dot"></div>
+<div id="cursor-ring"></div>
+<div id="cursor-pixel"></div>
+
+<!-- THEME TOGGLE FAB -->
+<button id="theme-fab" title="Toggle light / dark">
+  <span id="theme-fab-ico">🌙</span>
+  <span class="fab-label" id="theme-fab-lbl">Dark</span>
+</button>
+
+<!-- ═══════════════ TOOLBAR ═══════════════ -->
+<div id="toolbar">
+  <div class="tb-logo">PRISM<span>Design System Studio</span></div>
+  <div class="tb-sep"></div>
+  <button class="tb-btn" id="btn-presets">🎨 Presets</button>
+  <div class="tb-spacer"></div>
+  <button class="tb-btn" id="btn-edit-mode">✏ Edit Mode</button>
+  <div class="tb-sep"></div>
+  <button class="tb-icon" id="btn-colors" title="Colors">🖌</button>
+  <button class="tb-icon" id="btn-type" title="Typography">Aa</button>
+  <button class="tb-icon" id="btn-shape" title="Shape">📐</button>
+  <button class="tb-icon" id="btn-fx" title="Effects">✨</button>
+  <button class="tb-icon" id="btn-ix" title="Interactions">⚡</button>
+  <div class="tb-sep"></div>
+  <button class="tb-export" id="btn-export">Export ↗</button>
+</div>
+
+<!-- ═══════════════ SUBNAV ═══════════════ -->
+<div id="subnav">
+  <div class="snav-pill" data-section="colors">Colors</div>
+  <div class="snav-pill" data-section="typography">Typography</div>
+  <div class="snav-pill" data-section="buttons">Buttons</div>
+  <div class="snav-pill" data-section="forms">Forms</div>
+  <div class="snav-pill" data-section="cards">Cards</div>
+  <div class="snav-pill" data-section="navigation">Navigation</div>
+  <div class="snav-pill" data-section="feedback">Feedback</div>
+  <div class="snav-pill" data-section="data">Data</div>
+  <div class="snav-pill" data-section="overlays">Overlays</div>
+  <div class="snav-pill" data-section="interactions">Interactions</div>
+  <div class="snav-pill" data-section="mobile">Mobile</div>
+  <div class="snav-pill" data-section="feedback-board">Feedback</div>
+  <div class="snav-pill" data-section="ai-studio">AI Studio</div>
+</div>
+
+<!-- ═══════════════ SETTINGS DRAWER ═══════════════ -->
+<div id="drawer">
+  <div class="dw-head">
+    <span class="dw-title">⚙ Style Settings</span>
+    <button class="dw-close" id="dw-close-btn">✕</button>
+  </div>
+  <div class="dw-tabs" id="dw-tabs">
+    <button class="dw-tab active" data-panel="presets">Presets</button>
+    <button class="dw-tab" data-panel="colors">Colors</button>
+    <button class="dw-tab" data-panel="type">Type</button>
+    <button class="dw-tab" data-panel="shape">Shape</button>
+    <button class="dw-tab" data-panel="fx">FX</button>
+    <button class="dw-tab" data-panel="ix">Interactions</button>
+  </div>
+  <div class="dw-body" id="dw-body"></div>
+</div>
+
+<!-- ═══════════════ EXPORT MODAL ═══════════════ -->
+<div id="export-modal">
+  <div class="em-box">
+    <div class="em-head">
+      <span class="em-title">Export Design Tokens</span>
+      <button class="em-close" id="em-close-btn">✕</button>
+    </div>
+    <div class="em-tabs" id="em-tabs">
+      <button class="em-tab active" data-etype="css">CSS Vars</button>
+      <button class="em-tab" data-etype="tailwind">Tailwind</button>
+      <button class="em-tab" data-etype="scss">SCSS</button>
+      <button class="em-tab" data-etype="json">JSON (DTCG)</button>
+    </div>
+    <div class="em-body"><pre class="em-code" id="em-code"></pre></div>
+    <div class="em-foot">
+      <button class="em-btn" id="em-copy-btn">Copy to Clipboard</button>
+      <button class="em-btn" id="em-dl-btn" style="background:var(--secondary)">↓ Download File</button>
+      <div style="flex:1"></div>
+      <span style="font-size:.58rem;opacity:.38;align-self:center">Values reflect current settings</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ DEMO MODAL ═══════════════ -->
+<div class="modal-ov" id="demo-modal" style="display:none">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div class="modal-title">Confirm Action</div>
+      <button class="modal-x" id="demo-modal-x">✕</button>
+    </div>
+    <div class="modal-body-txt">Are you sure? All current customizations will be replaced. You can reset to defaults at any time using the ↺ button in the drawer.</div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" id="demo-modal-cancel">Cancel</button>
+      <button class="btn btn-filled btn-sm" id="demo-modal-confirm">Confirm →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ PAGE CONTENT ═══════════════ -->
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eye">Design System Studio · v2.0</div>
+  <h1 class="hero-h">DESIGN<br>SYSTEM</h1>
+  <p class="hero-sub">A fully live, editable design system. Click anything in edit mode to customise. Use the drawer or click inline — both sync perfectly. Choose from 10 trending presets or craft your own.</p>
+</div>
+
+<!-- COLORS -->
+<section id="colors">
+  <div class="sec-header">
+    <div class="sec-lbl">01 — Foundation</div>
+    <h2 class="sec-title">COLORS</h2>
+    <p class="sec-desc">Click any swatch to edit it inline. Changes cascade through the entire system instantly. Sync with the Colors tab in the drawer.</p>
+  </div>
+
+  <div class="glbl">Brand Palette</div>
+  <div class="swatch-g4">
+    <div><div class="sw-box" style="background:var(--bg)"><input type="color" id="sc--bg" oninput="PRISM.setVar('--bg',this.value)"></div><span class="sw-name">Background</span><span class="sw-var">--bg</span></div>
+    <div><div class="sw-box" style="background:var(--fg)"><input type="color" id="sc--fg" oninput="PRISM.setVar('--fg',this.value)"></div><span class="sw-name">Foreground</span><span class="sw-var">--fg</span></div>
+    <div><div class="sw-box" style="background:var(--primary)"><input type="color" id="sc--primary" oninput="PRISM.setVar('--primary',this.value)"></div><span class="sw-name">Primary</span><span class="sw-var">--primary</span></div>
+    <div><div class="sw-box" style="background:var(--primary-hover)"><input type="color" id="sc--primary-hover" oninput="PRISM.setVar('--primary-hover',this.value)"></div><span class="sw-name">Primary Hover</span><span class="sw-var">--primary-hover</span></div>
+    <div><div class="sw-box" style="background:var(--secondary)"><input type="color" id="sc--secondary" oninput="PRISM.setVar('--secondary',this.value)"></div><span class="sw-name">Secondary</span><span class="sw-var">--secondary</span></div>
+    <div><div class="sw-box" style="background:var(--accent)"><input type="color" id="sc--accent" oninput="PRISM.setVar('--accent',this.value)"></div><span class="sw-name">Accent</span><span class="sw-var">--accent</span></div>
+    <div><div class="sw-box" style="background:var(--accent2)"><input type="color" id="sc--accent2" oninput="PRISM.setVar('--accent2',this.value)"></div><span class="sw-name">Accent Alt</span><span class="sw-var">--accent2</span></div>
+    <div><div class="sw-box" style="background:var(--border)"><input type="color" id="sc--border" oninput="PRISM.setVar('--border',this.value)"></div><span class="sw-name">Border</span><span class="sw-var">--border</span></div>
+  </div>
+
+  <div class="glbl">Vibrant Card Palette</div>
+  <div class="swatch-g8">
+    <div><div class="sw-box-sm" style="background:var(--c1)"><input type="color" id="sc--c1" oninput="PRISM.setVar('--c1',this.value)"></div><span class="sw-name-sm">Yellow</span><span class="sw-var-sm">--c1</span></div>
+    <div><div class="sw-box-sm" style="background:var(--c2)"><input type="color" id="sc--c2" oninput="PRISM.setVar('--c2',this.value)"></div><span class="sw-name-sm">Purple</span><span class="sw-var-sm">--c2</span></div>
+    <div><div class="sw-box-sm" style="background:var(--c3)"><input type="color" id="sc--c3" oninput="PRISM.setVar('--c3',this.value)"></div><span class="sw-name-sm">Magenta</span><span class="sw-var-sm">--c3</span></div>
+    <div><div class="sw-box-sm" style="background:var(--c4)"><input type="color" id="sc--c4" oninput="PRISM.setVar('--c4',this.value)"></div><span class="sw-name-sm">Blue</span><span class="sw-var-sm">--c4</span></div>
+    <div><div class="sw-box-sm" style="background:var(--c5)"><input type="color" id="sc--c5" oninput="PRISM.setVar('--c5',this.value)"></div><span class="sw-name-sm">Coral</span><span class="sw-var-sm">--c5</span></div>
+    <div><div class="sw-box-sm" style="background:var(--c6)"><input type="color" id="sc--c6" oninput="PRISM.setVar('--c6',this.value)"></div><span class="sw-name-sm">Mint</span><span class="sw-var-sm">--c6</span></div>
+    <div><div class="sw-box-sm" style="background:var(--c7)"><input type="color" id="sc--c7" oninput="PRISM.setVar('--c7',this.value)"></div><span class="sw-name-sm">Orange</span><span class="sw-var-sm">--c7</span></div>
+    <div><div class="sw-box-sm" style="background:var(--c8)"><input type="color" id="sc--c8" oninput="PRISM.setVar('--c8',this.value)"></div><span class="sw-name-sm">Lavender</span><span class="sw-var-sm">--c8</span></div>
+  </div>
+
+  <div class="glbl">Status Colors</div>
+  <div class="swatch-g4">
+    <div><div class="sw-box" style="background:var(--success)"><input type="color" id="sc--success" oninput="PRISM.setVar('--success',this.value)"></div><span class="sw-name">Success</span><span class="sw-var">--success</span></div>
+    <div><div class="sw-box" style="background:var(--warning)"><input type="color" id="sc--warning" oninput="PRISM.setVar('--warning',this.value)"></div><span class="sw-name">Warning</span><span class="sw-var">--warning</span></div>
+    <div><div class="sw-box" style="background:var(--error)"><input type="color" id="sc--error" oninput="PRISM.setVar('--error',this.value)"></div><span class="sw-name">Error</span><span class="sw-var">--error</span></div>
+    <div><div class="sw-box" style="background:var(--info)"><input type="color" id="sc--info" oninput="PRISM.setVar('--info',this.value)"></div><span class="sw-name">Info</span><span class="sw-var">--info</span></div>
+  </div>
+</section>
+
+<!-- TYPOGRAPHY -->
+<section id="typography">
+  <div class="sec-header">
+    <div class="sec-lbl">02 — Type</div>
+    <h2 class="sec-title">TYPOGRAPHY</h2>
+    <p class="sec-desc">Switch fonts from the Type tab. Dual-font system: display sans + editorial serif.</p>
+  </div>
+  <div class="g2" style="gap:1rem;margin-bottom:2rem">
+    <div style="background:var(--c2);border-radius:var(--r-xl);border:var(--bw) solid var(--border);padding:1.65rem">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:.7rem">SANS — DISPLAY</div>
+      <div style="font-size:1.6rem;font-weight:800;line-height:1;font-family:var(--font-sans)">ABCDEFGHIJKLM</div>
+      <div style="font-size:1.6rem;font-weight:800;line-height:1.1;font-family:var(--font-sans);margin-bottom:.65rem">nopqrstuvwxyz</div>
+      <div style="font-size:.72rem;opacity:.6">Headings · Buttons · Labels · UI</div>
+    </div>
+    <div style="background:var(--c6);border-radius:var(--r-xl);border:var(--bw) solid var(--border);padding:1.65rem">
+      <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.6;margin-bottom:.7rem">SERIF — EDITORIAL</div>
+      <div style="font-size:1.6rem;font-weight:700;line-height:1;font-family:var(--font-serif)">ABCDEFGHIJKLM</div>
+      <div style="font-size:1.6rem;font-weight:700;line-height:1.1;font-family:var(--font-serif);margin-bottom:.65rem">nopqrstuvwxyz</div>
+      <div style="font-size:.72rem;opacity:.6">Body · Excerpts · Quotes</div>
+    </div>
+  </div>
+  <div style="border-bottom:1px solid var(--border-sub);padding-bottom:1.5rem;margin-bottom:1.5rem">
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.4;margin-bottom:.3rem">.display — Hero</div>
+    <div style="font-family:var(--font-sans);font-weight:var(--wt-h);font-size:clamp(3rem,9vw,7.5rem);text-transform:uppercase;letter-spacing:var(--ls);line-height:.82">DESIGN</div>
+  </div>
+  <div style="border-bottom:1px solid var(--border-sub);padding-bottom:1.25rem;margin-bottom:1.25rem">
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.4;margin-bottom:.3rem">.heading-xl — Section</div>
+    <div style="font-family:var(--font-sans);font-weight:var(--wt-h);font-size:clamp(1.9rem,4vw,3.2rem);text-transform:uppercase;letter-spacing:var(--ls)">DESIGN SYSTEM STUDIO</div>
+  </div>
+  <div style="border-bottom:1px solid var(--border-sub);padding-bottom:1.1rem;margin-bottom:1.1rem">
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.4;margin-bottom:.3rem">.heading-lg — Card title</div>
+    <div style="font-family:var(--font-sans);font-weight:var(--wt-h);font-size:1.6rem;text-transform:uppercase;letter-spacing:var(--ls)">Building a Modern Design System</div>
+  </div>
+  <div style="border-bottom:1px solid var(--border-sub);padding-bottom:1rem;margin-bottom:1rem">
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.4;margin-bottom:.3rem">.body-xl — Pull quote</div>
+    <div style="font-family:var(--font-serif);font-size:clamp(1.1rem,2.5vw,1.75rem);line-height:1.3;max-width:640px">A great design system unifies teams, speeds up development, and creates <em>delightful</em> user experiences at scale.</div>
+  </div>
+  <div style="border-bottom:1px solid var(--border-sub);padding-bottom:1rem;margin-bottom:1rem">
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.4;margin-bottom:.3rem">.body — Standard</div>
+    <div style="font-family:var(--font-serif);font-size:.95rem;line-height:var(--lh);max-width:580px;opacity:.82">Good typography is invisible. It guides the reader through the content without drawing attention to itself, creating a seamless reading experience that feels natural and effortless throughout.</div>
+  </div>
+  <div>
+    <div style="font-size:.6rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;opacity:.4;margin-bottom:.3rem">.mono — Code</div>
+    <div style="font-family:var(--font-mono);font-size:.85rem;background:var(--muted-bg);padding:.5rem 1rem;border-radius:var(--r-md);display:inline-block">const primary = 'var(--primary)' // #b08aec</div>
+  </div>
+</section>
+
+<!-- BUTTONS -->
+<section id="buttons">
+  <div class="sec-header">
+    <div class="sec-lbl">03 — Actions</div>
+    <h2 class="sec-title">BUTTONS</h2>
+    <p class="sec-desc">Change global button shape from the Shape tab. 9 style variants, 3 sizes, groups, and states.</p>
+  </div>
+  <div class="glbl">Style Variants</div>
+  <div class="row" style="margin-bottom:1.5rem">
+    <button class="btn btn-filled">Filled →</button>
+    <button class="btn btn-outline">Outline →</button>
+    <button class="btn btn-ghost">Ghost →</button>
+    <button class="btn btn-danger">Danger</button>
+    <button class="btn btn-success">Success</button>
+    <button class="btn btn-gradient">Gradient →</button>
+    <button class="btn btn-glow">Glow ✦</button>
+    <button class="btn btn-3d">3D Push</button>
+    <button class="btn btn-underline">Underline →</button>
+  </div>
+  <div class="glbl">Sizes & Groups</div>
+  <div class="row" style="align-items:center;margin-bottom:1.5rem">
+    <button class="btn btn-filled btn-sm">Small →</button>
+    <button class="btn btn-filled">Default →</button>
+    <button class="btn btn-filled btn-lg">Large →</button>
+    <button class="btn btn-outline btn-icon">⊕</button>
+    <div class="btn-group">
+      <button class="btn btn-outline">Left</button>
+      <button class="btn btn-filled">Mid</button>
+      <button class="btn btn-outline">Right</button>
+    </div>
+  </div>
+  <div class="glbl">States</div>
+  <div class="row">
+    <button class="btn btn-filled btn-loading">Processing…</button>
+    <button class="btn btn-outline ripple-btn" id="ripple-demo">Click for ripple</button>
+    <button class="btn btn-outline" disabled style="opacity:.32;cursor:not-allowed">Disabled</button>
+  </div>
+</section>
+
+<!-- FORMS -->
+<section id="forms">
+  <div class="sec-header">
+    <div class="sec-lbl">04 — Inputs</div>
+    <h2 class="sec-title">FORM CONTROLS</h2>
+    <p class="sec-desc">Real validation on blur. 6 input style variants. All controls interactive.</p>
+  </div>
+  <div class="g2" style="gap:2.5rem">
+    <div>
+      <div class="glbl">Validated Inputs</div>
+      <div class="ig" id="ig-email">
+        <label for="fi-email">Email</label>
+        <div class="input-wrap"><span class="input-ico">✉</span><input class="input" id="fi-email" type="text" placeholder="you@example.com" data-validate="email"></div>
+        <div class="hint">Enter a valid email address</div>
+      </div>
+      <div class="ig" id="ig-pass">
+        <label for="fi-pass">Password</label>
+        <div class="input-wrap"><span class="input-ico">🔒</span><input class="input has-r" id="fi-pass" type="password" placeholder="Min 8 chars, 1 number" data-validate="password"><span class="input-ico input-ico-r" id="pass-toggle" style="cursor:pointer;pointer-events:all">👁</span></div>
+        <div class="hint">Min 8 characters, at least one number</div>
+      </div>
+      <div class="ig" id="ig-phone">
+        <label for="fi-phone">Phone</label>
+        <input class="input" id="fi-phone" type="text" placeholder="+1 555 000 0000" data-validate="phone">
+        <div class="hint">Include country code</div>
+      </div>
+      <div class="ig" id="ig-url">
+        <label for="fi-url">Website URL</label>
+        <input class="input" id="fi-url" type="text" placeholder="https://yourdomain.com" data-validate="url">
+        <div class="hint">Must start with https://</div>
+      </div>
+      <div class="ig">
+        <label>Select Option</label>
+        <select class="select">
+          <option value="">Choose…</option>
+          <option selected>Design System</option>
+          <option>Component Library</option>
+          <option>Style Guide</option>
+          <option>Brand Kit</option>
+        </select>
+      </div>
+      <div class="ig">
+        <label>Message</label>
+        <textarea class="input" placeholder="Write something…">This design system is fully customizable in real time.</textarea>
+      </div>
+    </div>
+    <div>
+      <div class="glbl">Input Style Variants</div>
+      <div class="ig"><label>Bordered (default)</label><input class="input" type="text" placeholder="Standard bordered input"></div>
+      <div class="ig"><label>Underline only</label><input class="input input-underline" type="text" placeholder="Clean underline style"></div>
+      <div class="ig"><label>Filled / no border</label><input class="input input-filled" type="text" placeholder="Filled background"></div>
+      <div class="ig"><label>Ghost</label><input class="input input-ghost" type="text" placeholder="Ghost — no border"></div>
+      <div class="ig"><label>Glow on focus</label><input class="input input-glow" type="text" placeholder="Glow effect on focus"></div>
+      <div class="ig"><label>Thick border</label><input class="input input-thick" type="text" placeholder="Heavy border weight"></div>
+
+      <div class="glbl">Toggles, Checks & Radios</div>
+      <label class="toggle-r" id="tgl1"><div class="toggle-t on" id="tgl1-t"><div class="toggle-k"></div></div><span>Dark mode enabled</span></label>
+      <label class="toggle-r" id="tgl2"><div class="toggle-t" id="tgl2-t"><div class="toggle-k"></div></div><span>Notifications off</span></label>
+      <label class="toggle-r" id="tgl3"><div class="toggle-t on" id="tgl3-t"><div class="toggle-k"></div></div><span>Auto-save on</span></label>
+      <div style="margin-top:.5rem"></div>
+      <label class="chk-r" id="chk1"><div class="chk-box on" id="chk1-b">✓</div><span>Accept terms of service</span></label>
+      <label class="chk-r" id="chk2"><div class="chk-box" id="chk2-b"></div><span>Subscribe to newsletter</span></label>
+      <div style="margin-top:.3rem"></div>
+      <label class="chk-r" id="rad1"><div class="rad-box on" id="rad1-b"></div><span>Monthly billing</span></label>
+      <label class="chk-r" id="rad2"><div class="rad-box" id="rad2-b"></div><span>Annual billing — save 30%</span></label>
+
+      <div class="glbl">Range Sliders</div>
+      <div style="margin-bottom:1rem">
+        <div class="flex-b" style="margin-bottom:.35rem"><span style="font-size:.72rem;font-weight:700">Opacity</span><span style="font-size:.72rem;opacity:.45" id="opacity-val">72%</span></div>
+        <input type="range" class="range-in" id="opacity-range" value="72" min="0" max="100">
+      </div>
+      <div>
+        <div class="flex-b" style="margin-bottom:.35rem"><span style="font-size:.72rem;font-weight:700">Scale</span><span style="font-size:.72rem;opacity:.45" id="scale-val">1.2×</span></div>
+        <input type="range" class="range-in" id="scale-range" value="60" min="0" max="100">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARDS -->
+<section id="cards">
+  <div class="sec-header">
+    <div class="sec-lbl">05 — Components</div>
+    <h2 class="sec-title">CARDS & LAYOUT</h2>
+  </div>
+  <div class="glbl">KPI / Stat Cards</div>
+  <div class="g4" style="margin-bottom:2rem">
+    <div class="stat-card" style="background:var(--c1)"><div class="stat-ico">📈</div><div class="stat-val">$48.2K</div><div class="stat-lbl">Revenue</div><div class="stat-d up">↑ 12.4% vs last month</div></div>
+    <div class="stat-card" style="background:var(--c4)"><div class="stat-ico">👥</div><div class="stat-val">3,842</div><div class="stat-lbl">Active Users</div><div class="stat-d up">↑ 8.1% this week</div></div>
+    <div class="stat-card" style="background:var(--c5)"><div class="stat-ico">⚡</div><div class="stat-val">99.9%</div><div class="stat-lbl">Uptime</div><div class="stat-d up">→ SLA maintained</div></div>
+    <div class="stat-card" style="background:var(--c6)"><div class="stat-ico">🎯</div><div class="stat-val">94.2</div><div class="stat-lbl">NPS Score</div><div class="stat-d dn">↓ 2.1 vs last qtr</div></div>
+  </div>
+  <div class="glbl">Article Cards</div>
+  <div class="g3" style="margin-bottom:2rem">
+    <div class="card" style="background:var(--c2)"><div class="card-img-wrap"><div class="card-img-ph" style="background:linear-gradient(var(--grad-angle),var(--c3),var(--c2))">🎨</div></div><div class="card-p"><div class="card-tag">Design</div><div class="card-title">Modern Design Systems</div><div class="card-body">Discover the principles behind building scalable design systems that grow with your team.</div></div><div class="card-ft"><span style="font-size:.65rem;opacity:.55;text-transform:uppercase;font-weight:700">Mar 15, 2025</span><button class="btn btn-outline btn-sm">Read →</button></div></div>
+    <div class="card" style="background:var(--c7)"><div class="card-img-wrap"><div class="card-img-ph" style="background:linear-gradient(var(--grad-angle),var(--c5),var(--c7))">🌿</div></div><div class="card-p"><div class="card-tag">Style</div><div class="card-title">Capsule Wardrobe Guide</div><div class="card-body">A curated approach to minimalist dressing that maximises versatility and expression.</div></div><div class="card-ft"><span style="font-size:.65rem;opacity:.55;text-transform:uppercase;font-weight:700">Feb 28, 2025</span><button class="btn btn-outline btn-sm">Read →</button></div></div>
+    <div class="card" style="background:var(--c4)"><div class="card-img-wrap"><div class="card-img-ph" style="background:linear-gradient(var(--grad-angle),var(--c8),var(--c4))">🌊</div></div><div class="card-p"><div class="card-tag">Tech</div><div class="card-title">Generative Interfaces</div><div class="card-body">How AI is reshaping the way we think about adaptive layouts and intelligent personalization.</div></div><div class="card-ft"><span style="font-size:.65rem;opacity:.55;text-transform:uppercase;font-weight:700">Jan 10, 2025</span><button class="btn btn-outline btn-sm">Read →</button></div></div>
+  </div>
+  <div class="glbl">Pricing</div>
+  <div class="g3" style="margin-bottom:2rem">
+    <div class="price-card"><div class="price-plan">Starter</div><div class="price-amt">$0</div><div class="price-per">forever free</div><ul class="price-list"><li>3 projects</li><li>Basic components</li><li>Community support</li></ul><button class="btn btn-outline" style="width:100%;justify-content:center">Get started</button></div>
+    <div class="price-card feat"><div class="price-badge">Popular</div><div class="price-plan">Pro</div><div class="price-amt">$29</div><div class="price-per">per month, billed annually</div><ul class="price-list"><li>Unlimited projects</li><li>All components</li><li>Priority support</li><li>Custom tokens</li></ul><button class="btn btn-filled" style="width:100%;justify-content:center;border-color:var(--primary)">Start free trial →</button></div>
+    <div class="price-card"><div class="price-plan">Enterprise</div><div class="price-amt">$99</div><div class="price-per">custom billing</div><ul class="price-list"><li>Everything in Pro</li><li>SSO + SAML</li><li>SLA guarantee</li><li>Dedicated manager</li></ul><button class="btn btn-outline" style="width:100%;justify-content:center">Contact sales</button></div>
+  </div>
+  <div class="glbl">Testimonials</div>
+  <div class="g2">
+    <div class="testi"><div class="testi-q">"PRISM completely changed how our team ships UI. We went from inconsistent one-offs to a coherent, beautiful system in a single afternoon."</div><div class="testi-author"><div class="ava ava-md" style="background:var(--c3)">JL</div><div><div class="ava-name">Jamie Lee</div><div class="ava-role">Head of Design, Acme Co.</div></div></div></div>
+    <div class="testi"><div class="testi-q">"The real-time customization is next level. Our brand refresh took 2 hours instead of 2 weeks. Every token, every component — perfectly synced."</div><div class="testi-author"><div class="ava ava-md" style="background:var(--c4)">MR</div><div><div class="ava-name">Marco Russo</div><div class="ava-role">CTO, Studio Nova</div></div></div></div>
+  </div>
+</section>
+
+<!-- NAVIGATION -->
+<section id="navigation">
+  <div class="sec-header">
+    <div class="sec-lbl">06 — Wayfinding</div>
+    <h2 class="sec-title">NAVIGATION</h2>
+  </div>
+  <div class="glbl">Tabs</div>
+  <div style="margin-bottom:2rem">
+    <div class="nav-tabs-demo" id="ntabs">
+      <div class="ntab active" data-ntab="nt1">Overview</div>
+      <div class="ntab" data-ntab="nt2">Components</div>
+      <div class="ntab" data-ntab="nt3">Tokens</div>
+      <div class="ntab" data-ntab="nt4">Changelog</div>
+    </div>
+    <div id="nt1" class="tab-body">A design system is a collection of reusable components and guidelines that helps teams build better products faster. It is the single source of truth for design and code.</div>
+    <div id="nt2" class="tab-body" style="display:none">Components include buttons, inputs, cards, modals, tables — all built on the same token foundation.</div>
+    <div id="nt3" class="tab-body" style="display:none">Design tokens are the core values: colors, spacing, typography, radius, shadows. They live in CSS variables and flow into every component.</div>
+    <div id="nt4" class="tab-body" style="display:none">v2.0 — PRISM engine, inline editing. v1.2 — Dark mode. v1.0 — Initial release.</div>
+  </div>
+  <div class="glbl">Breadcrumbs & Pagination</div>
+  <div class="row" style="flex-direction:column;align-items:flex-start;gap:1.1rem;margin-bottom:2rem">
+    <div class="bcrumb"><span class="bc-i">Home</span><span class="bc-s">›</span><span class="bc-i">Design System</span><span class="bc-s">›</span><span class="bc-i">Components</span><span class="bc-s">›</span><span class="bc-i active">Navigation</span></div>
+    <div class="pagi">
+      <button class="pg-btn" disabled>‹</button>
+      <button class="pg-btn active">1</button>
+      <button class="pg-btn">2</button>
+      <button class="pg-btn">3</button>
+      <span style="opacity:.38;font-size:.8rem;padding:0 .2rem">…</span>
+      <button class="pg-btn">12</button>
+      <button class="pg-btn">›</button>
+    </div>
+  </div>
+  <div class="glbl">Sidebar & Dropdown</div>
+  <div class="row" style="align-items:flex-start;gap:2rem">
+    <div class="side-nav">
+      <div class="s-nav-i active"><span class="s-nav-ico">🏠</span>Dashboard</div>
+      <div class="s-nav-i"><span class="s-nav-ico">🎨</span>Design</div>
+      <div class="s-nav-i"><span class="s-nav-ico">📦</span>Components</div>
+      <div class="s-nav-i"><span class="s-nav-ico">📐</span>Tokens</div>
+      <div class="s-nav-i"><span class="s-nav-ico">📊</span>Analytics</div>
+      <div class="s-nav-i"><span class="s-nav-ico">⚙</span>Settings</div>
+    </div>
+    <div>
+      <div class="glbl">Dropdown Menu</div>
+      <div class="dd-wrap">
+        <button class="btn btn-outline" id="dd-trigger">Account ▾</button>
+        <div class="dd-menu" id="dd-menu">
+          <div class="dd-i">👤 Profile</div>
+          <div class="dd-i">⚙ Settings</div>
+          <div class="dd-i">🎨 Theme</div>
+          <div class="dd-sep"></div>
+          <div class="dd-i danger">🚪 Sign out</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEEDBACK -->
+<section id="feedback">
+  <div class="sec-header">
+    <div class="sec-lbl">07 — Status</div>
+    <h2 class="sec-title">FEEDBACK</h2>
+  </div>
+  <div class="g2" style="gap:2rem">
+    <div>
+      <div class="glbl">Alerts</div>
+      <div class="alert alert-info"><span class="alert-ico">ℹ</span><div><div class="alert-title">Heads up</div><div class="alert-body">Your trial ends in 7 days. Upgrade to keep all features.</div></div></div>
+      <div class="alert alert-success"><span class="alert-ico">✓</span><div><div class="alert-title">Success</div><div class="alert-body">Design tokens exported successfully.</div></div></div>
+      <div class="alert alert-warning"><span class="alert-ico">⚠</span><div><div class="alert-title">Warning</div><div class="alert-body">Approaching your monthly token limit.</div></div></div>
+      <div class="alert alert-error"><span class="alert-ico">✕</span><div><div class="alert-title">Error</div><div class="alert-body">Failed to save changes. Check your connection.</div></div></div>
+      <div class="glbl">Toast</div>
+      <div class="toast"><span class="toast-ico">✅</span><span class="toast-msg">Changes saved successfully</span><button class="toast-x">✕</button></div>
+    </div>
+    <div>
+      <div class="glbl">Badges</div>
+      <div class="row" style="flex-wrap:wrap;gap:.45rem;margin-bottom:1.5rem">
+        <span class="badge badge-primary">New</span><span class="badge badge-success">Active</span><span class="badge badge-error">Offline</span><span class="badge badge-warning">Pending</span><span class="badge badge-outline">Draft</span><span class="badge badge-primary">Beta</span>
+      </div>
+      <div class="glbl">Progress Bars</div>
+      <div class="prog-wrap"><div class="prog-lr"><span class="prog-lbl">Storage</span><span class="prog-pct">72%</span></div><div class="prog-track"><div class="prog-bar" style="width:72%"></div></div></div>
+      <div class="prog-wrap sm"><div class="prog-lr"><span class="prog-lbl">Tasks</span><span class="prog-pct">45/60</span></div><div class="prog-track"><div class="prog-bar" style="width:75%;background:var(--success)"></div></div></div>
+      <div class="prog-wrap lg"><div class="prog-lr"><span class="prog-lbl">Upload</span><span class="prog-pct">23%</span></div><div class="prog-track"><div class="prog-bar" style="width:23%;background:var(--warning)"></div></div></div>
+      <div class="glbl">Loaders</div>
+      <div class="row" style="align-items:center;gap:1.5rem;margin-bottom:1.5rem">
+        <div class="spin sm"></div><div class="spin"></div><div class="spin lg"></div>
+      </div>
+      <div class="glbl">Skeleton</div>
+      <div style="display:flex;gap:.7rem;align-items:center;margin-bottom:.8rem">
+        <div class="skel" style="width:2.5rem;height:2.5rem;border-radius:50%;flex-shrink:0"></div>
+        <div style="flex:1"><div class="skel skel-line" style="width:58%"></div><div class="skel skel-line" style="width:88%"></div><div class="skel skel-line" style="width:42%"></div></div>
+      </div>
+      <div class="skel" style="height:7rem;border-radius:var(--r-lg)"></div>
+    </div>
+  </div>
+</section>
+
+<!-- DATA DISPLAY -->
+<section id="data">
+  <div class="sec-header">
+    <div class="sec-lbl">08 — Data</div>
+    <h2 class="sec-title">DATA DISPLAY</h2>
+  </div>
+  <div class="glbl">Avatars & Stacks</div>
+  <div class="row" style="align-items:center;gap:2rem;margin-bottom:1.5rem">
+    <div class="ava ava-sm" style="background:var(--c3)">JL</div>
+    <div class="ava ava-md" style="background:var(--c4)">MR</div>
+    <div class="ava ava-lg" style="background:var(--c2)">AK</div>
+    <div class="ava-stack">
+      <div class="ava ava-md" style="background:var(--c1)">A</div>
+      <div class="ava ava-md" style="background:var(--c4)">B</div>
+      <div class="ava ava-md" style="background:var(--c3)">C</div>
+      <div class="ava ava-md" style="background:var(--c6)">D</div>
+      <div class="ava ava-md" style="background:var(--muted-bg);color:var(--fg);font-size:.58rem">+12</div>
+    </div>
+  </div>
+  <div class="glbl">Data Table</div>
+  <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>User</th><th>Status</th><th>Role</th><th>Projects</th><th>Joined</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr><td><div class="td-ava"><div class="ava ava-sm" style="background:var(--c3)">JL</div>Jamie Lee</div></td><td><span class="badge badge-success">Active</span></td><td>Head of Design</td><td>12</td><td>Jan 2024</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+        <tr><td><div class="td-ava"><div class="ava ava-sm" style="background:var(--c4)">MR</div>Marco R.</div></td><td><span class="badge badge-warning">Pending</span></td><td>CTO</td><td>8</td><td>Mar 2024</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+        <tr><td><div class="td-ava"><div class="ava ava-sm" style="background:var(--c6)">AK</div>Aiko Kim</div></td><td><span class="badge badge-success">Active</span></td><td>Developer</td><td>24</td><td>Nov 2023</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+        <tr><td><div class="td-ava"><div class="ava ava-sm" style="background:var(--c7)">TP</div>Tom Park</div></td><td><span class="badge badge-error">Offline</span></td><td>Designer</td><td>6</td><td>Jun 2024</td><td><button class="btn btn-ghost btn-sm">Edit</button></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="glbl" style="margin-top:1.5rem">Tooltips</div>
+  <div class="row" style="gap:1rem">
+    <div class="tip-wrap"><button class="btn btn-outline">Hover me</button><div class="tip">This is a tooltip!</div></div>
+    <div class="tip-wrap"><button class="btn btn-filled">Save</button><div class="tip">⌘ + S</div></div>
+    <div class="tip-wrap"><button class="btn btn-ghost">Delete</button><div class="tip" style="background:var(--error)">Cannot be undone</div></div>
+  </div>
+</section>
+
+<!-- OVERLAYS -->
+<section id="overlays">
+  <div class="sec-header">
+    <div class="sec-lbl">09 — Overlays</div>
+    <h2 class="sec-title">OVERLAYS</h2>
+  </div>
+  <div class="g2" style="gap:2rem">
+    <div>
+      <div class="glbl">Modal</div>
+      <button class="btn btn-filled" id="open-demo-modal">Open Modal →</button>
+      <div class="glbl" style="margin-top:1.5rem">Notification Center</div>
+      <div style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-xl);overflow:hidden">
+        <div style="padding:.9rem 1.1rem;border-bottom:1px solid var(--border-sub);display:flex;justify-content:space-between;align-items:center"><span style="font-weight:900;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em">Notifications</span><span class="badge badge-primary">4 new</span></div>
+        <div style="padding:.8rem 1.1rem;border-bottom:1px solid var(--border-sub);display:flex;gap:.65rem;align-items:flex-start;background:var(--muted-bg)"><div class="ava ava-sm" style="background:var(--success);flex-shrink:0;margin-top:.1rem">✓</div><div><div style="font-size:.76rem;font-weight:800">Tokens exported</div><div style="font-size:.65rem;opacity:.45;margin-top:.12rem;font-family:var(--font-serif)">2 minutes ago</div></div></div>
+        <div style="padding:.8rem 1.1rem;border-bottom:1px solid var(--border-sub);display:flex;gap:.65rem;align-items:flex-start;background:var(--muted-bg)"><div class="ava ava-sm" style="background:var(--c4);flex-shrink:0;margin-top:.1rem">MR</div><div><div style="font-size:.76rem;font-weight:800">Marco commented on Card</div><div style="font-size:.65rem;opacity:.45;margin-top:.12rem;font-family:var(--font-serif)">14 minutes ago</div></div></div>
+        <div style="padding:.8rem 1.1rem;display:flex;gap:.65rem;align-items:flex-start"><div class="ava ava-sm" style="background:var(--warning);flex-shrink:0;margin-top:.1rem">!</div><div><div style="font-size:.76rem;font-weight:800">Trial expires in 7 days</div><div style="font-size:.65rem;opacity:.45;margin-top:.12rem;font-family:var(--font-serif)">1 hour ago</div></div></div>
+      </div>
+    </div>
+    <div>
+      <div class="glbl">Quick Form Sheet</div>
+      <div style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-xl);padding:1.5rem">
+        <div style="font-weight:900;font-size:.9rem;text-transform:uppercase;margin-bottom:1.2rem;letter-spacing:.04em">Login</div>
+        <div class="ig"><label>Email</label><input class="input" type="email" placeholder="you@example.com"></div>
+        <div class="ig"><label>Password</label><input class="input" type="password" placeholder="••••••••"></div>
+        <button class="btn btn-filled" style="width:100%;justify-content:center;margin-top:.3rem">Sign in →</button>
+        <div style="text-align:center;margin-top:.7rem;font-size:.7rem;opacity:.45;font-family:var(--font-serif)">Forgot password?</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIONS -->
+<section id="interactions">
+  <div class="sec-header">
+    <div class="sec-lbl">10 — Motion</div>
+    <h2 class="sec-title">INTERACTIONS</h2>
+    <p class="sec-desc">Configure hover effects, card animations, cursor styles, and click effects. All applied globally via the Interactions drawer tab.</p>
+  </div>
+
+  <div class="glbl">Hover Effects — hover each card</div>
+  <div class="g3" style="margin-bottom:2rem">
+    <div class="hover-demo-card hover-scale"><div style="font-size:2rem">⤢</div><div class="ix-label">Scale Up</div></div>
+    <div class="hover-demo-card hover-lift"><div style="font-size:2rem">↑</div><div class="ix-label">Lift & Shadow</div></div>
+    <div class="hover-demo-card hover-glow"><div style="font-size:2rem">✦</div><div class="ix-label">Glow Border</div></div>
+    <div class="hover-demo-card hover-tilt"><div style="font-size:2rem">◇</div><div class="ix-label">3D Tilt</div></div>
+    <div class="hover-demo-card hover-bounce"><div style="font-size:2rem">↕</div><div class="ix-label">Bounce</div></div>
+    <div class="hover-demo-card hover-wiggle"><div style="font-size:2rem">〰</div><div class="ix-label">Wiggle</div></div>
+  </div>
+
+  <div class="glbl">Card Edge Animations — always on</div>
+  <div class="g3" style="margin-bottom:2rem">
+    <div class="hover-demo-card card-border-spin" style="min-height:8rem"><div style="font-size:2rem">🌀</div><div class="ix-label">Spinning Gradient Border</div></div>
+    <div class="hover-demo-card card-shimmer" style="min-height:8rem"><div style="font-size:2rem">✨</div><div class="ix-label">Shimmer Sweep</div></div>
+    <div class="hover-demo-card card-pulse" style="min-height:8rem"><div style="font-size:2rem">💓</div><div class="ix-label">Pulse Glow</div></div>
+  </div>
+
+  <div class="glbl">Cursor Styles — click to apply</div>
+  <div class="row" style="gap:.75rem;margin-bottom:2rem">
+    <button class="btn btn-outline" id="cursor-default">Default</button>
+    <button class="btn btn-outline" id="cursor-dot-btn">● Dot Follower</button>
+    <button class="btn btn-outline" id="cursor-cross-btn">✛ Crosshair</button>
+    <button class="btn btn-outline" id="cursor-pixel-btn">▪ Pixel</button>
+    <button class="btn btn-outline" id="cursor-none-btn">○ Hidden</button>
+  </div>
+
+  <div class="glbl">Ripple Click — click the button</div>
+  <button class="btn btn-filled ripple-btn" id="ripple-demo2" style="margin-bottom:2rem">Click anywhere on me →</button>
+
+  <div class="glbl">Transition Speed</div>
+  <div class="row" style="gap:.75rem">
+    <button class="btn btn-outline tx-speed" data-speed="0ms">Instant</button>
+    <button class="btn btn-filled tx-speed" data-speed="150ms">Fast (150ms)</button>
+    <button class="btn btn-outline tx-speed" data-speed="300ms">Default (300ms)</button>
+    <button class="btn btn-outline tx-speed" data-speed="600ms">Slow (600ms)</button>
+    <button class="btn btn-outline tx-speed" data-speed="1000ms">Molasses (1s)</button>
+  </div>
+</section>
+
+<!-- MOBILE -->
+<section id="mobile">
+  <div class="sec-header">
+    <div class="sec-lbl">11 — Mobile</div>
+    <h2 class="sec-title">MOBILE</h2>
+    <p class="sec-desc">Same design tokens power every mobile component. All colors, radii, and shadows flow through automatically.</p>
+  </div>
+  <div class="row" style="gap:2rem;align-items:flex-start;flex-wrap:wrap">
+    <div class="phone-frame">
+      <div class="phone-screen">
+        <div class="msb"><span class="msb-t">9:41</span><span class="msb-t">●●●● 🔋</span></div>
+        <div class="mab"><button class="mab-ico">←</button><div class="mab-title">Dashboard</div><button class="mab-ico">🔔</button><button class="mab-ico">👤</button></div>
+        <div class="m-content">
+          <div class="m-card"><div class="m-ico" style="background:var(--c1)">📈</div><div class="m-text"><div class="m-title">Revenue</div><div class="m-sub">$48.2K this month</div></div><span class="badge badge-success" style="font-size:.42rem">↑12%</span></div>
+          <div class="m-card"><div class="m-ico" style="background:var(--c4)">👥</div><div class="m-text"><div class="m-title">Users</div><div class="m-sub">3,842 active</div></div><span class="badge badge-primary" style="font-size:.42rem">↑8%</span></div>
+          <div class="m-card"><div class="m-ico" style="background:var(--c3)">🎨</div><div class="m-text"><div class="m-title">Tokens</div><div class="m-sub">124 exported</div></div><span class="badge badge-outline" style="font-size:.42rem">NEW</span></div>
+          <div class="m-card" style="background:var(--c2);border-color:transparent"><div class="m-ico" style="background:rgba(0,0,0,.12)">⚡</div><div class="m-text"><div class="m-title">Uptime</div><div class="m-sub">99.9% SLA</div></div></div>
+        </div>
+        <div class="mbn">
+          <div class="mbn-i active"><div class="mbn-ico">🏠</div><div class="mbn-lbl">Home</div></div>
+          <div class="mbn-i"><div class="mbn-ico">🔍</div><div class="mbn-lbl">Search</div></div>
+          <div class="mbn-i"><div class="mbn-ico">⊕</div><div class="mbn-lbl">Create</div></div>
+          <div class="mbn-i"><div class="mbn-ico">📊</div><div class="mbn-lbl">Stats</div></div>
+          <div class="mbn-i"><div class="mbn-ico">👤</div><div class="mbn-lbl">You</div></div>
+        </div>
+      </div>
+    </div>
+    <div style="flex:1;min-width:260px">
+      <div class="glbl">Login Sheet</div>
+      <div style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-xl);padding:1.4rem;margin-bottom:1rem">
+        <div style="font-weight:900;font-size:.88rem;text-transform:uppercase;margin-bottom:1.1rem;letter-spacing:.04em">Sign In</div>
+        <div class="ig"><label>Email</label><input class="input" type="email" placeholder="you@example.com"></div>
+        <div class="ig"><label>Password</label><input class="input" type="password" placeholder="••••••••"></div>
+        <button class="btn btn-filled" style="width:100%;justify-content:center;margin-top:.25rem">Continue →</button>
+      </div>
+      <div class="glbl">App Bar Variants</div>
+      <div style="background:var(--fg);border-radius:var(--r-lg);padding:.7rem .95rem;display:flex;align-items:center;gap:.55rem;margin-bottom:.45rem">
+        <span style="font-family:var(--font-sans);font-weight:900;font-size:.82rem;letter-spacing:.06em;color:var(--bg);flex:1;text-transform:uppercase">PRISM</span>
+        <div class="mab-ico" style="background:rgba(255,255,255,.1);color:var(--bg)">🔍</div>
+        <div class="mab-ico" style="background:rgba(255,255,255,.1);color:var(--bg)">⚙</div>
+      </div>
+      <div style="background:var(--primary);border-radius:var(--r-lg);padding:.7rem .95rem;display:flex;align-items:center;gap:.55rem">
+        <span style="font-family:var(--font-serif);font-weight:700;font-style:italic;font-size:.92rem;color:var(--fg);flex:1">Prism Studio</span>
+        <div class="mab-ico" style="background:rgba(0,0,0,.12)">←</div>
+        <div class="mab-ico" style="background:rgba(0,0,0,.12)">⋯</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEEDBACK SECTION -->
+<section id="feedback-board">
+  <div class="sec-header">
+    <div class="sec-lbl">12 — Community</div>
+    <h2 class="sec-title">FEEDBACK</h2>
+    <p class="sec-desc">Found a bug? Have a feature idea? Vote on what others are saying, leave a comment, or flag something that's broken.</p>
+  </div>
+
+  <!-- Submit form -->
+  <div style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-xl);padding:1.5rem;margin-bottom:2rem">
+    <div style="display:flex;gap:1rem;margin-bottom:1rem">
+      <button class="fb-type-btn active" data-type="bug" style="flex:1;padding:.5rem;border-radius:var(--r-md);border:var(--bw) solid var(--border-sub);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all var(--tx-f);background:var(--error);color:#fff;border-color:var(--error)">🐛 Bug Report</button>
+      <button class="fb-type-btn" data-type="feature" style="flex:1;padding:.5rem;border-radius:var(--r-md);border:var(--bw) solid var(--border-sub);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all var(--tx-f);background:transparent;color:var(--fg)">✨ Feature Request</button>
+      <button class="fb-type-btn" data-type="other" style="flex:1;padding:.5rem;border-radius:var(--r-md);border:var(--bw) solid var(--border-sub);font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;transition:all var(--tx-f);background:transparent;color:var(--fg)">💬 General</button>
+    </div>
+    <div class="ig" style="margin-bottom:.75rem"><label>Title</label><input class="input" id="fb-title" type="text" placeholder="Short summary of your feedback…"></div>
+    <div class="ig" style="margin-bottom:.75rem"><label>Description</label><textarea class="input" id="fb-desc" placeholder="More detail — what happened, what did you expect?" style="min-height:80px"></textarea></div>
+    <div style="display:flex;gap:.75rem;align-items:center">
+      <select class="select" id="fb-section" style="flex:1">
+        <option value="">All sections</option>
+        <option>Colors</option><option>Typography</option><option>Buttons</option><option>Forms</option>
+        <option>Cards</option><option>Navigation</option><option>Feedback</option><option>Data</option>
+        <option>Overlays</option><option>Interactions</option><option>Mobile</option><option>Drawer / Settings</option><option>Export</option>
+      </select>
+      <button class="btn btn-filled" id="fb-submit">Submit →</button>
+    </div>
+  </div>
+
+  <!-- Feed -->
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+    <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.45">Community Feed</div>
+    <div style="display:flex;gap:.4rem">
+      <button class="btn btn-outline btn-sm fb-filter active" data-filter="all">All</button>
+      <button class="btn btn-outline btn-sm fb-filter" data-filter="bug">Bugs</button>
+      <button class="btn btn-outline btn-sm fb-filter" data-filter="feature">Features</button>
+    </div>
+  </div>
+  <div id="fb-feed">
+    <!-- Seeded items -->
+    <div class="fb-item" data-type="bug" style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-lg);padding:1.1rem 1.25rem;margin-bottom:.75rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0">
+        <button class="vote-btn" data-votes="14" style="font-size:.62rem;font-weight:800;background:var(--muted-bg);border:var(--bw) solid var(--border-sub);border-radius:var(--r-md);padding:.35rem .6rem;cursor:pointer;color:var(--fg)">▲<br><span>14</span></button>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem;flex-wrap:wrap">
+          <span class="badge badge-error">Bug</span>
+          <span style="font-size:.62rem;opacity:.4;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Drawer / Settings</span>
+        </div>
+        <div style="font-weight:800;font-size:.88rem;margin-bottom:.28rem">Cursor options conflict with overlay modals</div>
+        <div style="font-family:var(--font-serif);font-size:.8rem;opacity:.7;line-height:1.55">When a custom cursor is active and you open the export modal, the cursor dot renders above the modal backdrop but the ring lags behind. Needs React portal fix.</div>
+        <div style="margin-top:.65rem;display:flex;gap:.5rem;align-items:center">
+          <button class="btn btn-ghost btn-sm reply-toggle">💬 2 replies</button>
+          <span style="font-size:.62rem;opacity:.38">Posted by @prism_team · 2d ago</span>
+          <span class="badge" style="background:rgba(239,68,68,.12);color:var(--error);border:1px solid rgba(239,68,68,.2);font-size:.52rem">TODO: React</span>
+        </div>
+      </div>
+    </div>
+    <div class="fb-item" data-type="feature" style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-lg);padding:1.1rem 1.25rem;margin-bottom:.75rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0">
+        <button class="vote-btn" data-votes="28" style="font-size:.62rem;font-weight:800;background:var(--muted-bg);border:var(--bw) solid var(--border-sub);border-radius:var(--r-md);padding:.35rem .6rem;cursor:pointer;color:var(--fg)">▲<br><span>28</span></button>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem;flex-wrap:wrap">
+          <span class="badge badge-primary">Feature</span>
+          <span style="font-size:.62rem;opacity:.4;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Drawer / Settings</span>
+        </div>
+        <div style="font-weight:800;font-size:.88rem;margin-bottom:.28rem">Save custom presets locally</div>
+        <div style="font-family:var(--font-serif);font-size:.8rem;opacity:.7;line-height:1.55">After spending time configuring a theme, users should be able to name and save it as a preset that persists via localStorage or a backend. The AI version would let you describe a vibe and generate it.</div>
+        <div style="margin-top:.65rem;display:flex;gap:.5rem;align-items:center">
+          <button class="btn btn-ghost btn-sm reply-toggle">💬 5 replies</button>
+          <span style="font-size:.62rem;opacity:.38">Posted by @jlee_design · 5d ago</span>
+        </div>
+      </div>
+    </div>
+    <div class="fb-item" data-type="bug" style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-lg);padding:1.1rem 1.25rem;margin-bottom:.75rem;display:flex;gap:1rem;align-items:flex-start">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0">
+        <button class="vote-btn" data-votes="9" style="font-size:.62rem;font-weight:800;background:var(--muted-bg);border:var(--bw) solid var(--border-sub);border-radius:var(--r-md);padding:.35rem .6rem;cursor:pointer;color:var(--fg)">▲<br><span>9</span></button>
+      </div>
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem;flex-wrap:wrap">
+          <span class="badge badge-error">Bug</span>
+          <span style="font-size:.62rem;opacity:.4;font-weight:700;text-transform:uppercase;letter-spacing:.06em">Interactions</span>
+        </div>
+        <div style="font-weight:800;font-size:.88rem;margin-bottom:.28rem">Transition speed radios don't replay animations</div>
+        <div style="font-family:var(--font-serif);font-size:.8rem;opacity:.7;line-height:1.55">Switching speed updates the CSS var correctly but any card already mid-transition doesn't reflect the new speed. React remount via key prop will solve this.</div>
+        <div style="margin-top:.65rem;display:flex;gap:.5rem;align-items:center">
+          <button class="btn btn-ghost btn-sm reply-toggle">💬 1 reply</button>
+          <span style="font-size:.62rem;opacity:.38">Posted by @mrusso_dev · 1d ago</span>
+          <span class="badge" style="background:rgba(239,68,68,.12);color:var(--error);border:1px solid rgba(239,68,68,.2);font-size:.52rem">TODO: React</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI CHAT SECTION (UI MOCKUP — backend coming soon) -->
+<section id="ai-studio">
+  <div class="sec-header">
+    <div class="sec-lbl">13 — AI Studio</div>
+    <h2 class="sec-title">AI DESIGN<br>ASSISTANT</h2>
+    <p class="sec-desc">Describe a vibe, paste a font URL, upload an image for color extraction — the AI handles the rest. <strong>Coming in Pro.</strong></p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 380px;gap:1.5rem;align-items:start">
+    <!-- Chat window -->
+    <div style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-xl);overflow:hidden;display:flex;flex-direction:column;min-height:480px">
+      <!-- Chat header -->
+      <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--border-sub);display:flex;align-items:center;gap:.75rem;background:var(--muted-bg)">
+        <div style="width:2.2rem;height:2.2rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0">✦</div>
+        <div>
+          <div style="font-weight:900;font-size:.82rem;text-transform:uppercase;letter-spacing:.04em">PRISM AI</div>
+          <div style="font-size:.62rem;opacity:.45;margin-top:.05rem">Design assistant · Pro feature</div>
+        </div>
+        <div style="margin-left:auto"><span class="badge" style="background:rgba(245,158,11,.15);color:var(--warning);border:1px solid rgba(245,158,11,.3)">Coming Soon</span></div>
+      </div>
+      <!-- Message thread -->
+      <div style="flex:1;padding:1.25rem;display:flex;flex-direction:column;gap:.85rem;overflow-y:auto" id="ai-thread">
+        <!-- AI message -->
+        <div style="display:flex;gap:.65rem;align-items:flex-start;max-width:85%">
+          <div style="width:1.8rem;height:1.8rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0">✦</div>
+          <div style="background:var(--fg);color:var(--bg);border-radius:0 var(--r-lg) var(--r-lg) var(--r-lg);padding:.75rem 1rem;font-family:var(--font-serif);font-size:.82rem;line-height:1.55">
+            Hi! I'm your PRISM design assistant. Here's what I can help you with:
+            <ul style="margin:.5rem 0 0 1rem;opacity:.8;font-size:.78rem">
+              <li>Generate a color palette from a mood or image</li>
+              <li>Load custom fonts from any Google Fonts URL</li>
+              <li>Apply a design style from text description</li>
+              <li>Create and save custom presets</li>
+            </ul>
+          </div>
+        </div>
+        <!-- User message example -->
+        <div style="display:flex;gap:.65rem;align-items:flex-start;max-width:85%;align-self:flex-end;flex-direction:row-reverse">
+          <div class="ava ava-sm" style="background:var(--c3);flex-shrink:0">You</div>
+          <div style="background:var(--primary);color:var(--fg);border-radius:var(--r-lg) 0 var(--r-lg) var(--r-lg);padding:.75rem 1rem;font-family:var(--font-serif);font-size:.82rem;line-height:1.55">
+            I want a luxury dark theme with gold accents, like a high-end watch brand.
+          </div>
+        </div>
+        <!-- AI response -->
+        <div style="display:flex;gap:.65rem;align-items:flex-start;max-width:85%">
+          <div style="width:1.8rem;height:1.8rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0">✦</div>
+          <div style="background:var(--fg);color:var(--bg);border-radius:0 var(--r-lg) var(--r-lg) var(--r-lg);padding:.75rem 1rem;font-family:var(--font-serif);font-size:.82rem;line-height:1.55">
+            I'd apply the <strong>Dark Luxury</strong> preset as a base, then adjust the gold tone to a warmer #C9922A and pair it with Cormorant Garamond for the serif. Want me to apply that?
+            <div style="margin-top:.65rem;display:flex;gap:.45rem">
+              <button class="btn btn-filled btn-sm" style="font-size:.58rem;padding:.3rem .7rem" onclick="PRISM.setVar('--bg','#0a0a0a');PRISM.setVar('--fg','#f5e6c8');PRISM.setVar('--primary','#c9922a')">Apply Preview →</button>
+              <button class="btn btn-ghost btn-sm" style="font-size:.58rem;padding:.3rem .7rem;color:rgba(255,255,255,.6)">Not quite</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- Input area -->
+      <div style="padding:.9rem 1.1rem;border-top:1px solid var(--border-sub);background:var(--muted-bg)">
+        <div style="display:flex;gap:.65rem;align-items:flex-end">
+          <div style="flex:1">
+            <input class="input" id="ai-input" type="text" placeholder="Describe a style, paste a font URL, or ask anything…" style="border-radius:var(--r-full)">
+          </div>
+          <button class="btn btn-icon btn-filled" id="ai-send" style="flex-shrink:0">→</button>
+        </div>
+        <div style="display:flex;gap:.5rem;margin-top:.65rem;flex-wrap:wrap">
+          <button class="ai-quick" style="font-size:.58rem;font-weight:700;padding:.28rem .65rem;border-radius:var(--r-full);border:1px solid var(--border-sub);background:transparent;color:var(--fg);cursor:pointer;opacity:.65;transition:opacity var(--tx-f)" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.65">🎨 Generate palette from image</button>
+          <button class="ai-quick" style="font-size:.58rem;font-weight:700;padding:.28rem .65rem;border-radius:var(--r-full);border:1px solid var(--border-sub);background:transparent;color:var(--fg);cursor:pointer;opacity:.65;transition:opacity var(--tx-f)" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.65">🔤 Load Google Font</button>
+          <button class="ai-quick" style="font-size:.58rem;font-weight:700;padding:.28rem .65rem;border-radius:var(--r-full);border:1px solid var(--border-sub);background:transparent;color:var(--fg);cursor:pointer;opacity:.65;transition:opacity var(--tx-f)" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.65">💾 Save as preset</button>
+          <button class="ai-quick" style="font-size:.58rem;font-weight:700;padding:.28rem .65rem;border-radius:var(--r-full);border:1px solid var(--border-sub);background:transparent;color:var(--fg);cursor:pointer;opacity:.65;transition:opacity var(--tx-f)" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.65">✦ Surprise me</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Side info panel -->
+    <div style="display:flex;flex-direction:column;gap:1rem">
+      <div style="background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-xl);padding:1.25rem">
+        <div style="font-weight:900;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.85rem">What AI can do</div>
+        <div style="display:flex;flex-direction:column;gap:.65rem">
+          ${[['🎨','Color extraction','Upload an image — AI pulls the dominant palette and applies it'],['🔤','Font loading','Paste any Google Fonts URL or describe a typeface style'],['✨','Style generation','Describe a vibe in plain English → full theme applied instantly'],['💾','Save presets','Name and save any configuration, sync across sessions (Pro)'],['📸','Brand match','Upload a logo or screenshot — AI reverse-engineers the style']].map(([ico,title,desc])=>`
+          <div style="display:flex;gap:.65rem;align-items:flex-start">
+            <div style="font-size:1.1rem;flex-shrink:0;margin-top:.05rem">${ico}</div>
+            <div><div style="font-weight:800;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:.15rem">${title}</div><div style="font-size:.72rem;opacity:.6;font-family:var(--font-serif);line-height:1.5">${desc}</div></div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <div style="background:linear-gradient(135deg,var(--primary),var(--accent2));border-radius:var(--r-xl);padding:1.25rem">
+        <div style="font-weight:900;font-size:.85rem;text-transform:uppercase;letter-spacing:.06em;margin-bottom:.4rem">Get early access</div>
+        <div style="font-family:var(--font-serif);font-size:.8rem;opacity:.85;line-height:1.5;margin-bottom:1rem">AI features launch with PRISM Pro. Drop your email and we'll notify you when it's ready.</div>
+        <div style="display:flex;gap:.45rem">
+          <input type="email" placeholder="your@email.com" id="ai-email" style="flex:1;background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.3);border-radius:var(--r-full);padding:.45rem .9rem;font-family:var(--font-sans);font-size:.72rem;font-weight:600;color:#fff;outline:none" onfocus="this.style.background='rgba(255,255,255,.28)'" onblur="this.style.background='rgba(255,255,255,.2)'">
+          <button class="btn btn-sm" id="ai-notify-btn" style="background:rgba(255,255,255,.95);color:var(--fg);border:none;font-size:.62rem;flex-shrink:0">Notify me</button>
+        </div>
+        <div id="ai-notify-confirm" style="display:none;font-size:.7rem;margin-top:.5rem;opacity:.85;font-family:var(--font-serif)">✓ You're on the list! We'll be in touch.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-grid">
+    <div><div class="ft-logo">PRISM</div><div class="ft-tagline">Design System Studio</div></div>
+    <div><div class="ft-h">Product</div><a href="#" class="ft-a">Components</a><a href="#" class="ft-a">Presets</a><a href="#" class="ft-a">Export</a></div>
+    <div><div class="ft-h">Connect</div><a href="#" class="ft-a">GitHub</a><a href="#" class="ft-a">Twitter</a><a href="#" class="ft-a">Discord</a></div>
+    <div>
+      <div class="ft-h">Newsletter</div>
+      <div style="display:flex;gap:.5rem;align-items:flex-end">
+        <input type="email" placeholder="YOUR EMAIL" style="flex:1;background:transparent;border:none;border-bottom:2px solid rgba(255,255,255,.28);padding:.45rem 0;font-family:var(--font-sans);font-weight:700;font-size:.65rem;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.75);outline:none">
+        <button class="btn btn-outline" style="border-color:rgba(255,255,255,.35);color:rgba(255,255,255,.75);font-size:.62rem;padding:.35rem .75rem">→</button>
+      </div>
+    </div>
+  </div>
+  <div class="ft-copy"><span>© 2025 PRISM Studio. All rights reserved.</span><span>Made with ❤ & CSS Variables</span></div>
+</footer>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   PRISM ENGINE — All functions namespaced, bound via addEventListener
+════════════════════════════════════════════════════════════ */
+const PRISM = (function() {
+  const root = document.documentElement;
+
+  /* ── DEFAULTS ── */
+  const D = {
+    '--bg':'#ede5f8','--fg':'#1a0835','--primary':'#b08aec','--primary-hover':'#8c4de8',
+    '--secondary':'#7b4fcc','--accent':'#4b2280','--accent2':'#d859f5',
+    '--border':'#1a0835','--border-sub':'rgba(26,8,53,.15)','--surface':'rgba(255,255,255,.5)',
+    '--muted-bg':'rgba(26,8,53,.06)',
+    '--c1':'#e8c828','--c2':'#a87dd4','--c3':'#cc44d8','--c4':'#5898d4',
+    '--c5':'#f07898','--c6':'#38c888','--c7':'#f07840','--c8':'#c0b0f0',
+    '--success':'#22c55e','--warning':'#f59e0b','--error':'#ef4444','--info':'#3b82f6',
+    '--font-sans':"'Syne',sans-serif",'--font-serif':"'Lora',Georgia,serif",
+    '--sz':'16px','--wt-h':'800','--wt-b':'400','--lh':'1.65','--ls':'-.01em',
+    '--r-xs':'.25rem','--r-sm':'.5rem','--r-md':'.75rem','--r-lg':'1.25rem',
+    '--r-xl':'1.75rem','--r-2xl':'2.5rem','--r-full':'9999px','--bw':'2px',
+    '--px':'5rem','--py':'4rem','--gap':'1.5rem',
+    '--sh-sm':'0 1px 4px rgba(0,0,0,.08)','--sh-md':'0 4px 16px rgba(0,0,0,.12)',
+    '--sh-lg':'0 12px 40px rgba(0,0,0,.16)','--sh-xl':'0 24px 64px rgba(0,0,0,.2)',
+    '--sh-col':'rgba(176,138,236,.3)','--blur':'0px','--glass-bg':'rgba(255,255,255,.08)',
+    '--grad-angle':'135deg','--tx-f':'150ms ease-in-out','--tx-m':'300ms ease-in-out',
+    '--tx-s':'500ms cubic-bezier(.34,1,.64,1)','--btn-radius':'9999px',
+    '--input-radius':'.75rem','--input-bw':'2px','--input-bg':'rgba(255,255,255,.5)',
+    '--input-border-col':'rgba(26,8,53,.15)','--input-focus-shadow':'0 0 0 3px rgba(176,138,236,.3)',
+  };
+
+  /* ── PRESETS ── */
+  const PRESETS = [
+    { id:'purple', name:'Purple Editorial', emoji:'💜', desc:'Rich editorial purple',
+      colors:['#ede5f8','#1a0835','#b08aec','#a87dd4','#7b4fcc','#4b2280','#d859f5','#1a0835'],
+      vars:{ '--bg':'#ede5f8','--fg':'#1a0835','--primary':'#b08aec','--primary-hover':'#8c4de8','--secondary':'#7b4fcc','--accent':'#4b2280','--accent2':'#d859f5','--border':'#1a0835','--sh-col':'rgba(176,138,236,.3)','--bw':'2px','--btn-radius':'9999px','--r-lg':'1.25rem','--r-xl':'1.75rem','--r-2xl':'2.5rem','--sh-sm':'0 1px 4px rgba(0,0,0,.08)','--sh-md':'0 4px 16px rgba(0,0,0,.12)','--sh-lg':'0 12px 40px rgba(0,0,0,.16)','--blur':'0px' } },
+    { id:'glass', name:'Glassmorphism', emoji:'🔮', desc:'Frosted glass & depth',
+      colors:['#0d0d1a','#ffffff','#a78bfa','#7c3aed','#6d28d9','#1e1b4b','#ec4899','rgba(255,255,255,.2)'],
+      vars:{ '--bg':'#0d0d1a','--fg':'#ffffff','--primary':'#a78bfa','--primary-hover':'#7c3aed','--secondary':'#6d28d9','--accent':'#1e1b4b','--accent2':'#ec4899','--border':'rgba(255,255,255,.2)','--border-sub':'rgba(255,255,255,.1)','--surface':'rgba(255,255,255,.06)','--muted-bg':'rgba(255,255,255,.05)','--sh-col':'rgba(167,139,250,.4)','--sh-md':'0 8px 32px rgba(167,139,250,.25)','--sh-lg':'0 20px 60px rgba(167,139,250,.3)','--bw':'1px','--blur':'16px','--btn-radius':'9999px','--r-lg':'1.25rem','--r-xl':'1.75rem','--r-2xl':'2.5rem' } },
+    { id:'brutalism', name:'Neo-Brutalism', emoji:'🔲', desc:'Raw. Bold. Loud.',
+      colors:['#f5f0e8','#000000','#ff6b35','#e8ff00','#000000','#000000','#ff006e','#000000'],
+      vars:{ '--bg':'#f5f0e8','--fg':'#000000','--primary':'#ff6b35','--primary-hover':'#e8ff00','--secondary':'#000000','--accent':'#000000','--accent2':'#ff006e','--border':'#000000','--border-sub':'rgba(0,0,0,.2)','--surface':'rgba(255,255,255,.65)','--muted-bg':'rgba(0,0,0,.04)','--sh-col':'rgba(0,0,0,.5)','--r-xs':'0','--r-sm':'0','--r-md':'0','--r-lg':'0','--r-xl':'0','--r-2xl':'0','--bw':'3px','--sh-sm':'4px 4px 0 #000','--sh-md':'6px 6px 0 #000','--sh-lg':'8px 8px 0 #000','--sh-xl':'10px 10px 0 #000','--btn-radius':'0','--blur':'0px' } },
+    { id:'neumorphism', name:'Neumorphism', emoji:'⬜', desc:'Soft extruded clay',
+      colors:['#e0e5ec','#3d4756','#7289da','#5a6fd6','#a0aec0','#7289da','#ff7eb3','#c4cfe4'],
+      vars:{ '--bg':'#e0e5ec','--fg':'#3d4756','--primary':'#7289da','--primary-hover':'#5a6fd6','--secondary':'#a0aec0','--accent':'#7289da','--accent2':'#ff7eb3','--border':'transparent','--border-sub':'transparent','--surface':'#e0e5ec','--muted-bg':'#d1d9e6','--sh-col':'rgba(114,137,218,.2)','--r-md':'1rem','--r-lg':'1.5rem','--r-xl':'2rem','--r-2xl':'2.75rem','--bw':'0px','--sh-sm':'4px 4px 10px #b8bec7,-4px -4px 10px #ffffff','--sh-md':'6px 6px 15px #b8bec7,-6px -6px 15px #ffffff','--sh-lg':'9px 9px 22px #b8bec7,-9px -9px 22px #ffffff','--btn-radius':'9999px','--blur':'0px' } },
+    { id:'swiss', name:'Swiss Minimal', emoji:'🇨🇭', desc:'Helvetica brutalist grid',
+      colors:['#ffffff','#000000','#ff0000','#cc0000','#555','#000','#ff6666','#000'],
+      vars:{ '--bg':'#ffffff','--fg':'#000000','--primary':'#ff0000','--primary-hover':'#cc0000','--secondary':'#555','--accent':'#000000','--accent2':'#ff6666','--border':'#000000','--border-sub':'rgba(0,0,0,.12)','--surface':'rgba(0,0,0,.025)','--muted-bg':'rgba(0,0,0,.04)','--sh-col':'rgba(255,0,0,.2)','--r-xs':'0','--r-sm':'0','--r-md':'0','--r-lg':'0','--r-xl':'0','--r-2xl':'0','--bw':'1.5px','--sh-sm':'none','--sh-md':'none','--sh-lg':'0 1px 0 #000','--btn-radius':'0','--blur':'0px' } },
+    { id:'luxury', name:'Dark Luxury', emoji:'✨', desc:'Gold on obsidian',
+      colors:['#0a0a0a','#f5e6c8','#d4a853','#e8c068','#9a7b3a','#1a1309','#c9a96e','rgba(212,168,83,.35)'],
+      vars:{ '--bg':'#0a0a0a','--fg':'#f5e6c8','--primary':'#d4a853','--primary-hover':'#e8c068','--secondary':'#9a7b3a','--accent':'#1a1309','--accent2':'#c9a96e','--border':'rgba(212,168,83,.35)','--border-sub':'rgba(212,168,83,.12)','--surface':'rgba(212,168,83,.05)','--muted-bg':'rgba(212,168,83,.04)','--sh-col':'rgba(212,168,83,.25)','--r-lg':'1rem','--r-xl':'1.5rem','--r-2xl':'2rem','--bw':'1px','--sh-sm':'0 2px 8px rgba(212,168,83,.12)','--sh-md':'0 8px 32px rgba(212,168,83,.15)','--sh-lg':'0 20px 60px rgba(212,168,83,.18)','--btn-radius':'9999px','--blur':'0px' } },
+    { id:'y2k', name:'Y2K Chrome', emoji:'💿', desc:'Iridescent nostalgia',
+      colors:['#f0f0ff','#1a0050','#ff69b4','#cc00ff','#00d4ff','#6600cc','#ff1493','#1a0050'],
+      vars:{ '--bg':'#f0f0ff','--fg':'#1a0050','--primary':'#ff69b4','--primary-hover':'#cc00ff','--secondary':'#00d4ff','--accent':'#6600cc','--accent2':'#ff1493','--border':'#1a0050','--border-sub':'rgba(26,0,80,.15)','--surface':'rgba(255,255,255,.6)','--sh-col':'rgba(255,105,180,.4)','--r-md':'1.5rem','--r-lg':'2rem','--r-xl':'2.5rem','--r-2xl':'3rem','--bw':'2px','--sh-sm':'0 0 10px rgba(255,105,180,.4)','--sh-md':'0 0 25px rgba(0,212,255,.35)','--sh-lg':'0 0 50px rgba(204,0,255,.3)','--btn-radius':'9999px','--blur':'0px' } },
+    { id:'aurora', name:'Aurora Dark', emoji:'🌌', desc:'Deep space glow',
+      colors:['#050510','#e8e0ff','#7b2fff','#9d4fff','#4a1fa8','#0a0a30','#ff3bac','rgba(123,47,255,.4)'],
+      vars:{ '--bg':'#050510','--fg':'#e8e0ff','--primary':'#7b2fff','--primary-hover':'#9d4fff','--secondary':'#4a1fa8','--accent':'#0a0a30','--accent2':'#ff3bac','--border':'rgba(123,47,255,.4)','--border-sub':'rgba(123,47,255,.18)','--surface':'rgba(123,47,255,.06)','--muted-bg':'rgba(123,47,255,.05)','--sh-col':'rgba(123,47,255,.4)','--r-lg':'1.5rem','--r-xl':'2rem','--r-2xl':'2.75rem','--bw':'1px','--sh-sm':'0 2px 15px rgba(123,47,255,.3)','--sh-md':'0 8px 40px rgba(123,47,255,.35)','--sh-lg':'0 20px 80px rgba(123,47,255,.4)','--btn-radius':'9999px','--blur':'0px' } },
+    { id:'clay', name:'Claymorphism', emoji:'🧸', desc:'3D pastel bubbles',
+      colors:['#ffeef8','#2d1b4e','#ff8fab','#ff4d7a','#c77dff','#a8d8ff','#ffd6ff','rgba(255,143,171,.15)'],
+      vars:{ '--bg':'#ffeef8','--fg':'#2d1b4e','--primary':'#ff8fab','--primary-hover':'#ff4d7a','--secondary':'#c77dff','--accent':'#a8d8ff','--accent2':'#ffd6ff','--border':'rgba(45,27,78,.15)','--border-sub':'rgba(45,27,78,.08)','--surface':'rgba(255,255,255,.6)','--sh-col':'rgba(255,143,171,.35)','--r-md':'1.5rem','--r-lg':'2rem','--r-xl':'2.5rem','--r-2xl':'3rem','--bw':'0px','--sh-sm':'0 8px 20px rgba(255,143,171,.3),inset 0 -4px 8px rgba(0,0,0,.06)','--sh-md':'0 16px 40px rgba(255,143,171,.35),inset 0 -6px 12px rgba(0,0,0,.05)','--sh-lg':'0 24px 60px rgba(255,143,171,.4),inset 0 -8px 16px rgba(0,0,0,.04)','--btn-radius':'9999px','--blur':'0px' } },
+    { id:'editorial', name:'Warm Editorial', emoji:'📰', desc:'Print magazine warmth',
+      colors:['hsl(32,71%,91%)','#1a1209','#c4902a','#e85d04','#7a5c3a','#9b2335','#e07a5f','#1a1209'],
+      vars:{ '--bg':'hsl(32,71%,91%)','--fg':'#1a1209','--primary':'#c4902a','--primary-hover':'#e85d04','--secondary':'#7a5c3a','--accent':'#9b2335','--accent2':'#e07a5f','--border':'#1a1209','--border-sub':'rgba(26,18,9,.15)','--surface':'rgba(255,255,255,.45)','--sh-col':'rgba(196,144,42,.2)','--r-xs':'.15rem','--r-sm':'.3rem','--r-md':'.5rem','--r-lg':'.75rem','--r-xl':'1rem','--r-2xl':'1.5rem','--bw':'2px','--sh-sm':'2px 2px 0 rgba(0,0,0,.12)','--sh-md':'4px 4px 0 rgba(0,0,0,.1)','--sh-lg':'6px 6px 0 rgba(0,0,0,.08)','--btn-radius':'0','--blur':'0px' } },
+  ];
+
+  const FONTS_SANS = {
+    'Syne':'Syne:wght@400;600;700;800',
+    'Inter':'Inter:wght@400;500;600;700;800;900',
+    'Space Grotesk':'Space+Grotesk:wght@400;500;600;700',
+    'DM Sans':'DM+Sans:wght@400;500;600;700;800',
+    'Outfit':'Outfit:wght@400;500;600;700;800;900',
+    'Plus Jakarta Sans':'Plus+Jakarta+Sans:wght@400;500;600;700;800',
+    'Manrope':'Manrope:wght@400;500;600;700;800',
+    'Nunito':'Nunito:wght@400;600;700;800;900',
+    'Poppins':'Poppins:wght@400;500;600;700;800;900',
+    'Raleway':'Raleway:wght@400;500;600;700;800;900',
+    'Montserrat':'Montserrat:wght@400;500;600;700;800;900',
+    'Barlow':'Barlow:wght@400;500;600;700;800;900',
+    'Work Sans':'Work+Sans:wght@400;500;600;700;800',
+    'Lexend':'Lexend:wght@400;500;600;700;800',
+    'Cabinet Grotesk':'Cabinet+Grotesk:wght@400;500;700;800',
+  };
+  const FONTS_SERIF = {
+    'Lora':'Lora:ital,wght@0,400;0,700;1,400;1,700',
+    'Playfair Display':'Playfair+Display:ital,wght@0,400;0,700;1,400',
+    'DM Serif Display':'DM+Serif+Display:ital@0;1',
+    'Cormorant Garamond':'Cormorant+Garamond:ital,wght@0,400;0,600;1,400',
+    'EB Garamond':'EB+Garamond:ital,wght@0,400;0,600;1,400',
+    'Merriweather':'Merriweather:ital,wght@0,300;0,700;1,300',
+    'Source Serif 4':'Source+Serif+4:wght@300;400;600;700',
+    'Libre Baskerville':'Libre+Baskerville:ital,wght@0,400;0,700;1,400',
+  };
+
+  let currentPreset = null;
+  let currentExportTab = 'css';
+  let editMode = false;
+
+  /* ── CORE ── */
+  function setVar(name, val) {
+    root.style.setProperty(name, val);
+    syncDrawerInput(name, val);
+    syncPageSwatch(name, val);
+    // Auto-highlight the section that shows this token in action
+    const sectionId = TOKEN_SECTION_MAP[name];
+    if (sectionId) scrollToSectionHighlight(sectionId, false);
+  }
+
+  function getVar(name) {
+    return root.style.getPropertyValue(name) || D[name] || '';
+  }
+
+  function tryHex(name) {
+    try { return toHex(getVar(name)); } catch(e) { return '#888888'; }
+  }
+
+  function toHex(v) {
+    if (!v) return '#000000';
+    v = v.trim();
+    if (/^#[0-9a-f]{6}/i.test(v)) return v.substring(0,7);
+    const tmp = document.createElement('canvas').getContext('2d');
+    tmp.fillStyle = v;
+    const rgb = tmp.fillStyle;
+    if (/^#[0-9a-f]{6}/i.test(rgb)) return rgb;
+    const m = v.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+    if (m) return '#'+[m[1],m[2],m[3]].map(x=>parseInt(x).toString(16).padStart(2,'0')).join('');
+    return '#888888';
+  }
+
+  function syncDrawerInput(name, val) {
+    document.querySelectorAll(`[data-dvar="${name}"]`).forEach(el => {
+      if (el.type === 'color') { try { el.value = toHex(val); } catch(e){} }
+      else if (el.type === 'range') { el.value = parseFloat(val) || 0; if(el.nextElementSibling) el.nextElementSibling.textContent = formatSliderVal(el); }
+    });
+  }
+
+  function syncPageSwatch(name, val) {
+    // name is '--bg', element id is 'sc--bg' → prefix is 'sc' not 'sc-'
+    const sc = document.getElementById('sc' + name);
+    if (sc && val) {
+      try { sc.value = toHex(val); } catch(e){}
+      sc.parentElement.style.background = val;
+    }
+  }
+
+  function syncAllDrawer() {
+    document.querySelectorAll('[data-dvar]').forEach(el => {
+      const v = getVar(el.dataset.dvar);
+      if (el.type === 'color') { try { el.value = toHex(v); } catch(e){} }
+      else if (el.type === 'range') { el.value = parseFloat(v) || 0; if(el.nextElementSibling) el.nextElementSibling.textContent = formatSliderVal(el); }
+    });
+  }
+
+  function syncAllSwatches() {
+    // inp.id = 'sc--bg' → strip prefix 'sc' → '--bg' (keep both dashes)
+    document.querySelectorAll('.sw-box input[type=color], .sw-box-sm input[type=color]').forEach(inp => {
+      const varName = inp.id ? inp.id.replace(/^sc/, '') : null; // 'sc--bg' → '--bg'
+      if (!varName) return;
+      const v = getVar(varName);
+      if (!v) return; // never wipe backgrounds with empty string
+      try { inp.value = toHex(v); } catch(e){}
+      inp.parentElement.style.background = v;
+    });
+  }
+
+  function formatSliderVal(el) {
+    const u = el.dataset.unit || '';
+    const dec = parseInt(el.dataset.dec || '0');
+    return parseFloat(el.value).toFixed(dec) + u;
+  }
+
+  /* ── CUSTOM PRESETS ── */
+  let customPresets = [];
+
+  function saveCurrentAsPreset(name) {
+    if (!name || !name.trim()) return;
+    const v = {};
+    Object.keys(D).forEach(k => { const val = root.style.getPropertyValue(k).trim(); if (val) v[k] = val; });
+    const thumbColors = ['--bg','--fg','--primary','--accent','--c1','--c2','--c3','--c4']
+      .map(k => (root.style.getPropertyValue(k).trim()) || D[k] || '#888');
+    customPresets.push({
+      id: 'custom_' + Date.now(),
+      name: name.trim(),
+      emoji: '⭐',
+      desc: 'Custom preset',
+      colors: thumbColors,
+      vars: v,
+      isCustom: true
+    });
+    renderPanel('presets');
+  }
+
+  function deleteCustomPreset(id) {
+    customPresets = customPresets.filter(p => p.id !== id);
+    if (currentPreset === id) currentPreset = null;
+    renderPanel('presets');
+  }
+
+  /* ── PRESETS ── */
+  function applyPreset(p) {
+    document.body.className = document.body.className.replace(/preset-\w+/g,'').trim();
+    currentPreset = p.id;
+    Object.entries(D).forEach(([k,v]) => root.style.setProperty(k, v));
+    Object.entries(p.vars).forEach(([k,v]) => root.style.setProperty(k, v));
+    syncAllDrawer();
+    syncAllSwatches();
+    renderPanel(currentDrawerPanel); // re-renders panel, active card set via currentPreset check
+  }
+
+  function resetAll() {
+    document.body.className = document.body.className.replace(/preset-\w+/g,'').trim();
+    currentPreset = null;
+    Object.entries(D).forEach(([k,v]) => root.style.setProperty(k, v));
+    syncAllDrawer();
+    syncAllSwatches();
+    document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('active'));
+    renderPanel(currentDrawerPanel);
+  }
+
+  /* ── DRAWER ── */
+  let currentDrawerPanel = 'presets';
+
+  function openDrawer(tab) {
+    document.getElementById('drawer').classList.add('open');
+    if (tab) switchDrawerPanel(tab);
+  }
+
+  function closeDrawer() {
+    document.getElementById('drawer').classList.remove('open');
+  }
+
+  function switchDrawerPanel(tab) {
+    currentDrawerPanel = tab;
+    document.querySelectorAll('.dw-tab').forEach(t => t.classList.toggle('active', t.dataset.panel === tab));
+    renderPanel(tab);
+  }
+
+  function renderPanel(tab) {
+    const body = document.getElementById('dw-body');
+    if (!body) return;
+    if (tab === 'presets') { body.innerHTML = buildPresets(); return; }
+    if (tab === 'colors') { body.innerHTML = buildColors(); attachDwInputs(); return; }
+    if (tab === 'type') { body.innerHTML = buildType(); attachDwInputs(); return; }
+    if (tab === 'shape') { body.innerHTML = buildShape(); attachDwInputs(); return; }
+    if (tab === 'fx') { body.innerHTML = buildFX(); attachDwInputs(); return; }
+    if (tab === 'ix') { body.innerHTML = buildIX(); return; }
+  }
+
+  function buildPresets() {
+    const allCustom = customPresets;
+    const customHtml = allCustom.length ? `
+      <div class="dw-sec-title" style="margin:1rem 0 .5rem">⭐ Saved Presets</div>
+      <div class="preset-grid">${allCustom.map(p => `
+        <div class="preset-card${currentPreset===p.id?' active':''}" data-pid="${p.id}" style="position:relative">
+          <div class="preset-thumb">${p.colors.map(c=>`<div style="background:${c}"></div>`).join('')}</div>
+          <div class="preset-info" style="display:flex;align-items:center;gap:.3rem">
+            <div style="flex:1;min-width:0"><div class="preset-name">${p.emoji} ${p.name}</div><div class="preset-desc">${p.desc}</div></div>
+            <button class="del-preset" data-pid="${p.id}" title="Delete" style="background:none;border:none;color:var(--error);font-size:.85rem;cursor:pointer;padding:.15rem;flex-shrink:0;opacity:.6;line-height:1" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.6">✕</button>
+          </div>
+        </div>`).join('')}
+      </div>` : '';
+
+    return `
+      <div class="dw-sec-title" style="margin-bottom:.6rem">Built-in</div>
+      <div class="preset-grid">${PRESETS.map(p => `
+        <div class="preset-card${currentPreset===p.id?' active':''}" data-pid="${p.id}">
+          <div class="preset-thumb">${p.colors.map(c=>`<div style="background:${c}"></div>`).join('')}</div>
+          <div class="preset-info"><div class="preset-name">${p.emoji} ${p.name}</div><div class="preset-desc">${p.desc}</div></div>
+        </div>`).join('')}
+      </div>
+      ${customHtml}
+      <hr class="dw-sep">
+      <div class="dw-sec-title" style="margin-bottom:.5rem">💾 Save Current as Preset</div>
+      <div style="display:flex;gap:.4rem">
+        <input type="text" id="preset-save-name" placeholder="Name your preset…"
+          style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+          border-radius:.4rem;padding:.38rem .65rem;font-size:.65rem;font-weight:600;
+          color:inherit;outline:none;font-family:inherit"
+          onfocus="this.style.borderColor='var(--primary)'"
+          onblur="this.style.borderColor='rgba(255,255,255,.18)'"
+          onkeydown="if(event.key==='Enter'){document.getElementById('preset-save-btn').click()}">
+        <button id="preset-save-btn"
+          style="background:var(--primary);border:none;color:var(--fg);
+          padding:.38rem .8rem;border-radius:.4rem;font-size:.62rem;font-weight:800;
+          text-transform:uppercase;letter-spacing:.08em;cursor:pointer;white-space:nowrap;font-family:inherit">
+          Save →
+        </button>
+      </div>
+      <button class="dw-reset" id="dw-reset-btn" style="margin-top:.75rem">↺ Reset to defaults</button>`;
+  }
+
+  function colorRow(label, varName) {
+    return `<div class="dw-row"><span class="dw-label">${label}</span>
+      <label class="dw-color"><input type="color" data-dvar="${varName}" value="${tryHex(varName)}"></label></div>`;
+  }
+
+  function sliderRow(label, varName, unit, min, max, step, dec=0) {
+    const cur = parseFloat(getVar(varName)) || 0;
+    return `<div class="dw-row"><span class="dw-label">${label}</span>
+      <div class="dw-sw"><input type="range" class="dw-sl" data-dvar="${varName}" data-unit="${unit}" data-dec="${dec}" min="${min}" max="${max}" step="${step}" value="${cur}">
+      <span class="dw-val">${cur.toFixed(dec)}${unit}</span></div></div>`;
+  }
+
+  function buildColors() {
+    return `<div class="dw-sec"><div class="dw-sec-title">Brand</div>
+      ${colorRow('Background','--bg')}${colorRow('Foreground','--fg')}${colorRow('Primary','--primary')}${colorRow('Primary Hover','--primary-hover')}
+      ${colorRow('Secondary','--secondary')}${colorRow('Accent','--accent')}${colorRow('Accent Alt','--accent2')}${colorRow('Border','--border')}</div>
+      <hr class="dw-sep">
+      <div class="dw-sec"><div class="dw-sec-title">Cards</div>
+      <div class="dw-cg">
+        ${['c1:Yellow','c2:Purple','c3:Magenta','c4:Blue','c5:Coral','c6:Mint','c7:Orange','c8:Lavender'].map(x=>{const[id,n]=x.split(':');return`<div class="dw-ci"><span class="dw-label">${n}</span><label class="dw-color"><input type="color" data-dvar="--${id}" value="${tryHex('--'+id)}"></label></div>`;}).join('')}
+      </div></div>
+      <hr class="dw-sep">
+      <div class="dw-sec"><div class="dw-sec-title">Status</div>
+        ${colorRow('Success','--success')}${colorRow('Warning','--warning')}${colorRow('Error','--error')}${colorRow('Info','--info')}
+      </div>
+      <button class="dw-reset" id="dw-reset-btn">↺ Reset all</button>`;
+  }
+
+  function buildType() {
+    const sansKeys = Object.keys(FONTS_SANS);
+    const serifKeys = Object.keys(FONTS_SERIF);
+    return `<div class="dw-sec"><div class="dw-sec-title">Font Families</div>
+      <div class="dw-row"><span class="dw-label">Display / Sans</span>
+        <select class="dw-select" id="font-sans-sel">${sansKeys.map(f=>`<option${getVar('--font-sans').includes(f)?` selected`:``}>${f}</option>`).join('')}</select></div>
+      <div class="dw-row"><span class="dw-label">Body / Serif</span>
+        <select class="dw-select" id="font-serif-sel">${serifKeys.map(f=>`<option${getVar('--font-serif').includes(f)?` selected`:``}>${f}</option>`).join('')}</select></div>
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec"><div class="dw-sec-title">Scale</div>
+        ${sliderRow('Base Size','--sz','px',12,22,1,0)}
+        ${sliderRow('Head Weight','--wt-h','',400,900,100,0)}
+        ${sliderRow('Body Weight','--wt-b','',300,700,100,0)}
+        ${sliderRow('Line Height','--lh','',1.2,2.2,.05,2)}
+        ${sliderRow('Letter Spacing','--ls','em',-.06,.15,.005,3)}
+      </div>
+      <button class="dw-reset" id="dw-reset-btn">↺ Reset</button>`;
+  }
+
+  function buildShape() {
+    const curBR = getVar('--btn-radius');
+    // Detect current shape language
+    const curXl = parseFloat(getVar('--r-xl')) || 1.75;
+    const shapeMode = curXl < 0.1 ? 'square' : curBR === '9999px' || parseFloat(curBR) > 50 ? 'pill' : 'rounded';
+    return `
+      <div class="dw-sec"><div class="dw-sec-title">Shape Language — applies everywhere</div>
+        <div style="display:flex;gap:.55rem;margin-bottom:.9rem" id="btn-shape-grp">
+          ${[
+            ['Pill','pill','9999px','border-radius:9999px'],
+            ['Rounded','rounded','.75rem','border-radius:.75rem'],
+            ['Square','square','0','border-radius:0']
+          ].map(([n,mode,v,style])=>`
+          <div class="dw-radio${shapeMode===mode?' active':''}" data-shape="${v}" data-shapemode="${mode}"
+            style="flex:1;display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:.6rem .3rem;border-radius:${shapeMode===mode?'0':'.45rem'}">
+            <div style="width:90%;height:2rem;background:var(--primary);${style};border:1.5px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center">
+              <div style="width:55%;height:.55rem;background:rgba(255,255,255,.4);${style}"></div>
+            </div>
+            <div style="display:flex;gap:.2rem;width:90%">
+              <div style="flex:1;height:2.2rem;background:rgba(255,255,255,.08);${style};border:1px solid rgba(255,255,255,.15)"></div>
+              <div style="flex:1.5;height:2.2rem;background:rgba(255,255,255,.08);${style};border:1px solid rgba(255,255,255,.15)"></div>
+            </div>
+            <span style="font-size:.52rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em">${n}</span>
+          </div>`).join('')}
+        </div>
+        <div style="font-size:.56rem;opacity:.45;margin-bottom:.75rem;font-style:italic">Changes buttons, cards, inputs, alerts, modals — the whole system at once</div>
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec">
+        <div class="dw-sec-title">Fine-tune Radius Scale</div>
+        <div style="font-size:.55rem;opacity:.4;margin-bottom:.6rem;font-style:italic">Drag to override individual levels</div>
+        ${sliderRow('XS (checkboxes)','--r-xs','rem',0,2,.0625,2)}
+        ${sliderRow('SM (tags / badges)','--r-sm','rem',0,2,.0625,2)}
+        ${sliderRow('MD (inputs / buttons)','--r-md','rem',0,3,.0625,2)}
+        ${sliderRow('LG (alerts / dropdowns)','--r-lg','rem',0,4,.125,2)}
+        ${sliderRow('XL (cards / panels)','--r-xl','rem',0,5,.125,2)}
+        ${sliderRow('2XL (modals / sheets)','--r-2xl','rem',0,6,.125,2)}
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec"><div class="dw-sec-title">Spacing & Border</div>
+        ${sliderRow('Border Width','--bw','px',0,5,.5,1)}
+        ${sliderRow('Section Pad X','--px','rem',1,8,.25,2)}
+        ${sliderRow('Section Pad Y','--py','rem',1,8,.25,2)}
+        ${sliderRow('Component Gap','--gap','rem',.5,4,.25,2)}
+      </div>
+      <button class="dw-reset" id="dw-reset-btn">↺ Reset</button>`;
+  }
+
+  function buildFX() {
+    return `<div class="dw-sec"><div class="dw-sec-title">Shadow Tint</div>
+        ${colorRow('Shadow Color','--sh-col')}
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec"><div class="dw-sec-title">Input Style</div>
+        <div class="dw-radio-group" id="input-style-grp">
+          ${['Bordered','Underline','Filled','Ghost','Glow','Thick'].map(n=>`<div class="dw-radio" data-istyle="${n.toLowerCase()}">${n}</div>`).join('')}
+        </div>
+        <div class="dw-sec-title" style="margin-top:.65rem">Input Shadow</div>
+        ${sliderRow('Focus Ring Size','--input-ring','px',0,8,1,0)}
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec"><div class="dw-sec-title">Gradient</div>
+        ${sliderRow('Angle','--grad-angle','deg',0,360,15,0)}
+        <div style="height:2.5rem;border-radius:var(--r-md);margin-top:.5rem;background:linear-gradient(var(--grad-angle),var(--primary),var(--accent2));border:var(--bw) solid var(--border-sub)" id="grad-preview"></div>
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec">
+        <div class="dw-sec-title" style="color:rgba(255,180,80,.7)">⚠ Coming in React</div>
+        <div style="font-size:.58rem;opacity:.45;line-height:1.5;font-style:italic">
+          Blur / Glassmorphism — requires per-element backdrop-filter control<br>
+          Per-component shadow overrides — needs component-level state<br>
+          Live shadow builder (offset / spread / inset sliders)
+        </div>
+        <!-- TODO (React): Add blur slider that applies backdrop-filter to .card, .surface elements dynamically -->
+        <!-- TODO (React): Add per-component shadow editor panel (x, y, blur, spread, color, inset) -->
+      </div>
+      <button class="dw-reset" id="dw-reset-btn">↺ Reset</button>`;
+  }
+
+  function buildIX() {
+    return `<div class="dw-sec"><div class="dw-sec-title">Global Card Hover</div>
+        <div class="dw-radio-group" id="hover-grp">
+          ${['None','Scale','Lift','Glow','Tilt','Bounce','Wiggle'].map(n=>`<div class="dw-radio${(PRISM._hoverMode||'none')===n.toLowerCase()?' active':''}" data-hover="${n.toLowerCase()}">${n}</div>`).join('')}
+        </div>
+        <div style="font-size:.56rem;opacity:.4;margin-top:.3rem;font-style:italic">Applies to all cards, stat cards, testimonials &amp; pricing</div>
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec">
+        <div class="dw-sec-title" style="color:rgba(255,200,80,.8)">⚠ Cursor — React Milestone</div>
+        <div style="font-size:.56rem;opacity:.45;line-height:1.5;margin-bottom:.4rem">Custom cursors conflict with overlay pointer events in vanilla. Preview them in the Interactions section on the page.</div>
+        <!-- TODO (React): Render cursor dot/ring as a React portal outside drawer DOM tree -->
+        <!-- TODO (React): Pixel cursor → canvas element with requestAnimationFrame loop -->
+        <!-- TODO (React): Add cursor trail effect option (array of trailing dots) -->
+        <div class="dw-radio-group" id="cursor-grp">
+          ${['Default','Dot','Cross','Pixel'].map(n=>`<div class="dw-radio${n==='Default'?' active':''}" data-cur="${n.toLowerCase()}">${n}</div>`).join('')}
+        </div>
+      </div>
+      <hr class="dw-sep">
+      <div class="dw-sec">
+        <div class="dw-sec-title" style="color:rgba(255,200,80,.8)">⚠ Transition Speed — React Milestone</div>
+        <div style="font-size:.56rem;opacity:.45;line-height:1.5;margin-bottom:.4rem">CSS var updates work but don't replay in-progress animations. React will force re-mount on speed change via key prop.</div>
+        <!-- TODO (React): Wrap component tree in <AnimationConfig> context; changing speed remounts with new framer-motion defaultTransition -->
+        <!-- TODO (React): Add easing curve selector (ease, spring, bounce, linear) as additional control -->
+        <div class="dw-radio-group" id="speed-grp">
+          ${[['Instant','0ms'],['Fast','150ms'],['Default','300ms'],['Slow','600ms']].map(([n,v])=>`<div class="dw-radio${v==='150ms'?' active':''}" data-speed="${v}">${n}</div>`).join('')}
+        </div>
+      </div>
+      <button class="dw-reset" id="dw-reset-btn" style="margin-top:1rem">↺ Reset</button>`;
+  }
+
+  function attachDwInputs() {
+    // Color pickers in drawer
+    document.querySelectorAll('#dw-body input[type=color][data-dvar]').forEach(inp => {
+      inp.addEventListener('input', () => setVar(inp.dataset.dvar, inp.value));
+    });
+    // Sliders in drawer
+    document.querySelectorAll('#dw-body input[type=range][data-dvar]').forEach(sl => {
+      sl.addEventListener('input', () => {
+        const unit = sl.dataset.unit || '';
+        const dec = parseInt(sl.dataset.dec || '0');
+        const v = parseFloat(sl.value).toFixed(dec);
+        const full = v + unit;
+        if (sl.nextElementSibling) sl.nextElementSibling.textContent = full;
+        root.style.setProperty(sl.dataset.dvar, full);
+        syncPageSwatch(sl.dataset.dvar, full);
+        // Live gradient preview in FX panel
+        if (sl.dataset.dvar === '--grad-angle') {
+          const gp = document.getElementById('grad-preview');
+          if (gp) gp.style.background = `linear-gradient(${full},var(--primary),var(--accent2))`;
+        }
+        // Live input focus ring update
+        if (sl.dataset.dvar === '--input-ring') {
+          root.style.setProperty('--input-focus-shadow', `0 0 0 ${full}px var(--sh-col)`);
+        }
+      });
+    });
+    // Font selectors
+    const sansEl = document.getElementById('font-sans-sel');
+    const serifEl = document.getElementById('font-serif-sel');
+    if (sansEl) sansEl.addEventListener('change', () => loadFont('sans', sansEl.value));
+    if (serifEl) serifEl.addEventListener('change', () => loadFont('serif', serifEl.value));
+    // Button+Card shape radio — applies full design language
+    const btnShapeGrp = document.getElementById('btn-shape-grp');
+    if (btnShapeGrp) btnShapeGrp.addEventListener('click', e => {
+      const r = e.target.closest('.dw-radio');
+      if (!r) return;
+      btnShapeGrp.querySelectorAll('.dw-radio').forEach(x => { x.classList.remove('active'); x.style.borderRadius = '.45rem'; });
+      r.classList.add('active'); r.style.borderRadius = '0';
+      const mode = r.dataset.shapemode;
+      applyShapeLanguage(mode);
+    });
+    // Input style radio
+    const istyleGrp = document.getElementById('input-style-grp');
+    if (istyleGrp) istyleGrp.addEventListener('click', e => {
+      const r = e.target.closest('.dw-radio');
+      if (!r) return;
+      istyleGrp.querySelectorAll('.dw-radio').forEach(x => x.classList.remove('active'));
+      r.classList.add('active');
+      applyInputStyle(r.dataset.istyle);
+    });
+    // Hover radio
+    const hoverGrp = document.getElementById('hover-grp');
+    if (hoverGrp) hoverGrp.addEventListener('click', e => {
+      const r = e.target.closest('.dw-radio');
+      if (!r) return;
+      hoverGrp.querySelectorAll('.dw-radio').forEach(x => x.classList.remove('active'));
+      r.classList.add('active');
+      applyGlobalHover(r.dataset.hover);
+    });
+    // Cursor radio
+    const cursorGrp = document.getElementById('cursor-grp');
+    if (cursorGrp) cursorGrp.addEventListener('click', e => {
+      const r = e.target.closest('.dw-radio');
+      if (!r) return;
+      cursorGrp.querySelectorAll('.dw-radio').forEach(x => x.classList.remove('active'));
+      r.classList.add('active');
+      applyCursor(r.dataset.cur);
+    });
+    // Speed radio
+    const speedGrp = document.getElementById('speed-grp');
+    if (speedGrp) speedGrp.addEventListener('click', e => {
+      const r = e.target.closest('.dw-radio');
+      if (!r) return;
+      speedGrp.querySelectorAll('.dw-radio').forEach(x => x.classList.remove('active'));
+      r.classList.add('active');
+      applySpeed(r.dataset.speed);
+    });
+    // Reset button
+    const resetBtn = document.getElementById('dw-reset-btn');
+    if (resetBtn) resetBtn.addEventListener('click', resetAll);
+
+    // Preset cards — built-in and custom, using event delegation on the drawer body
+    document.getElementById('dw-body')?.addEventListener('click', e => {
+      // Delete custom preset
+      const delBtn = e.target.closest('.del-preset');
+      if (delBtn) { e.stopPropagation(); deleteCustomPreset(delBtn.dataset.pid); return; }
+      // Apply preset on card click
+      const card = e.target.closest('.preset-card');
+      if (card) {
+        const pid = card.dataset.pid;
+        const p = PRESETS.find(x => x.id === pid) || customPresets.find(x => x.id === pid);
+        if (p) applyPreset(p);
+        return;
+      }
+      // Save preset button
+      if (e.target.id === 'preset-save-btn' || e.target.closest('#preset-save-btn')) {
+        const inp = document.getElementById('preset-save-name');
+        if (inp && inp.value.trim()) {
+          saveCurrentAsPreset(inp.value);
+          inp.value = '';
+          // Flash confirmation
+          const btn = document.getElementById('preset-save-btn');
+          if (btn) { const orig = btn.textContent; btn.textContent = '✓ Saved!'; btn.style.background = 'var(--success)'; setTimeout(() => { btn.textContent = orig; btn.style.background = 'var(--primary)'; }, 1800); }
+        } else if (inp) { inp.focus(); inp.style.borderColor = 'var(--error)'; setTimeout(() => { inp.style.borderColor = 'rgba(255,255,255,.18)'; }, 1200); }
+        return;
+      }
+      // Reset button (may be re-rendered inside dw-body)
+      if (e.target.id === 'dw-reset-btn') { resetAll(); }
+    });
+  }
+
+  function applyInputStyle(style) {
+    document.querySelectorAll('.input').forEach(inp => {
+      inp.classList.remove('input-underline','input-filled','input-ghost','input-glow','input-thick');
+      if (style !== 'bordered') inp.classList.add('input-' + style);
+    });
+  }
+
+  function applyGlobalHover(mode) {
+    // Targets every card-like surface on the page
+    const CARD_SEL = '.card, .stat-card, .testi, .price-card, .side-nav, .tbl-wrap, .hover-demo-card';
+    document.querySelectorAll(CARD_SEL).forEach(c => {
+      c.classList.remove('hover-scale','hover-lift','hover-glow','hover-tilt','hover-bounce','hover-wiggle');
+      if (mode !== 'none') c.classList.add('hover-' + mode);
+    });
+    // Persist selection so re-renders restore it
+    PRISM._hoverMode = mode;
+  }
+
+  function applyCursor(mode) {
+    document.body.classList.remove('cursor-dot','cursor-crosshair','cursor-none','cursor-pixel');
+    document.getElementById('cursor-dot').style.display = 'none';
+    document.getElementById('cursor-ring').style.display = 'none';
+    document.getElementById('cursor-pixel').style.display = 'none';
+    if (mode === 'dot') document.body.classList.add('cursor-dot');
+    else if (mode === 'crosshair') document.body.classList.add('cursor-crosshair');
+    else if (mode === 'none') document.body.classList.add('cursor-none');
+    else if (mode === 'pixel') document.body.classList.add('cursor-pixel');
+  }
+
+  function applySpeed(spd) {
+    root.style.setProperty('--tx-f', spd + ' ease-in-out');
+    root.style.setProperty('--tx-m', (parseInt(spd)*2 || 0) + 'ms ease-in-out');
+    root.style.setProperty('--tx-s', (parseInt(spd)*3 || 0) + 'ms cubic-bezier(.34,1,.64,1)');
+  }
+
+  function loadFont(type, name) {
+    const map = type === 'sans' ? FONTS_SANS : FONTS_SERIF;
+    const gfStr = map[name];
+    if (!gfStr) return;
+    const id = 'gf-' + type;
+    let link = document.getElementById(id);
+    if (!link) { link = document.createElement('link'); link.id = id; link.rel = 'stylesheet'; document.head.appendChild(link); }
+    link.href = `https://fonts.googleapis.com/css2?family=${gfStr}&display=swap`;
+    const prop = type === 'sans' ? '--font-sans' : '--font-serif';
+    root.style.setProperty(prop, `'${name}', ${type === 'sans' ? 'sans-serif' : 'Georgia, serif'}`);
+  }
+
+  /* ── EXPORT ── */
+  function openExport() {
+    document.getElementById('export-modal').classList.add('show');
+    generateExport(currentExportTab);
+  }
+
+  function closeExport() {
+    document.getElementById('export-modal').classList.remove('show');
+  }
+
+  function switchExportTab(type) {
+    currentExportTab = type;
+    document.querySelectorAll('.em-tab').forEach(t => t.classList.toggle('active', t.dataset.etype === type));
+    generateExport(type);
+  }
+
+  /* ── SHAPE LANGUAGE ── */
+  // Maps shape mode to full token set — buttons, cards, inputs, alerts all change together
+  function applyShapeLanguage(mode) {
+    const SHAPES = {
+      pill:    { '--btn-radius':'9999px','--input-radius':'9999px','--r-xs':'.25rem','--r-sm':'.5rem','--r-md':'.75rem','--r-lg':'1.25rem','--r-xl':'1.75rem','--r-2xl':'2.5rem' },
+      rounded: { '--btn-radius':'.75rem','--input-radius':'.75rem','--r-xs':'.25rem','--r-sm':'.45rem','--r-md':'.65rem','--r-lg':'1rem','--r-xl':'1.4rem','--r-2xl':'2rem' },
+      square:  { '--btn-radius':'0','--input-radius':'0','--r-xs':'0','--r-sm':'0','--r-md':'0','--r-lg':'0','--r-xl':'0','--r-2xl':'0' },
+    };
+    const tokens = SHAPES[mode];
+    if (!tokens) return;
+    Object.entries(tokens).forEach(([k,v]) => {
+      root.style.setProperty(k, v);
+      syncDrawerInput(k, v);
+      syncPageSwatch(k, v);
+    });
+    // Auto-scroll to Buttons section to show effect
+    scrollToSectionHighlight('buttons');
+  }
+
+  /* ── AUTO-SCROLL + HIGHLIGHT ON CHANGE ── */
+  // TOKEN → which section(s) to scroll to so user sees the effect immediately
+  const TOKEN_SECTION_MAP = {
+    '--bg':'colors','--fg':'colors','--primary':'colors','--primary-hover':'colors',
+    '--secondary':'colors','--accent':'colors','--accent2':'colors','--border':'colors',
+    '--c1':'colors','--c2':'colors','--c3':'colors','--c4':'colors',
+    '--c5':'colors','--c6':'colors','--c7':'colors','--c8':'colors',
+    '--success':'feedback','--warning':'feedback','--error':'feedback','--info':'feedback',
+    '--font-sans':'typography','--font-serif':'typography',
+    '--sz':'typography','--wt-h':'typography','--lh':'typography',
+    '--btn-radius':'buttons','--r-xs':'buttons','--r-sm':'buttons',
+    '--r-md':'forms','--r-lg':'cards','--r-xl':'cards','--r-2xl':'overlays',
+    '--bw':'buttons','--px':'colors','--py':'colors',
+    '--sh-sm':'cards','--sh-md':'cards','--sh-lg':'cards','--sh-col':'cards',
+    '--grad-angle':'buttons',
+  };
+  let _scrollDebounce = null;
+
+  function scrollToSectionHighlight(sectionId, forceScroll) {
+    const sec = document.getElementById(sectionId);
+    if (!sec) return;
+    // Always flash the subnav pill
+    document.querySelectorAll('.snav-pill').forEach(p => p.classList.toggle('active', p.dataset.section === sectionId));
+    // Highlight the section with a brief pulse
+    sec.style.transition = 'outline .15s';
+    sec.style.outline = '3px solid var(--primary)';
+    sec.style.outlineOffset = '-3px';
+    clearTimeout(_scrollDebounce);
+    _scrollDebounce = setTimeout(() => {
+      sec.style.outline = '';
+      sec.style.outlineOffset = '';
+    }, 900);
+    // Only scroll if the section is not already in view, or if forced
+    if (forceScroll) {
+      sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+      const rect = sec.getBoundingClientRect();
+      const offset = 56 + 48; // toolbar + subnav
+      if (rect.top < offset || rect.bottom > window.innerHeight) {
+        sec.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+  }
+
+  /* ── IMPROVED EXPORT ── */
+  function generateExport(type) {
+    const v = {};
+    Object.keys(D).forEach(k => { v[k] = root.style.getPropertyValue(k).trim() || D[k] || ''; });
+
+    const fontSans = v['--font-sans'].replace(/'/g,'"').split(',')[0].replace(/"/g,'').trim();
+    const fontSerif = v['--font-serif'].replace(/'/g,'"').split(',')[0].replace(/"/g,'').trim();
+
+    let out = '';
+    if (type === 'css') {
+      out = `/**
+ * PRISM Design Tokens — CSS Custom Properties
+ * Generated ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+ * Usage: import this file once at the root of your app.
+ * All components consume these variables — change here, updates everywhere.
+ */
+
+/* ─── Google Fonts ─── */
+/* @import url('https://fonts.googleapis.com/css2?family=${fontSans.replace(/ /g,'+')}:wght@400;600;700;800&family=${fontSerif.replace(/ /g,'+')}:wght@400;700&display=swap'); */
+
+:root {
+  /* ── Colors ── */
+  --color-bg:              ${v['--bg']};
+  --color-fg:              ${v['--fg']};
+  --color-primary:         ${v['--primary']};
+  --color-primary-hover:   ${v['--primary-hover']};
+  --color-secondary:       ${v['--secondary']};
+  --color-accent:          ${v['--accent']};
+  --color-accent-alt:      ${v['--accent2']};
+  --color-border:          ${v['--border']};
+  --color-border-subtle:   ${v['--border-sub']};
+  --color-surface:         ${v['--surface']};
+  --color-muted-bg:        ${v['--muted-bg']};
+
+  /* ── Card Palette ── */
+  --card-1: ${v['--c1']};
+  --card-2: ${v['--c2']};
+  --card-3: ${v['--c3']};
+  --card-4: ${v['--c4']};
+  --card-5: ${v['--c5']};
+  --card-6: ${v['--c6']};
+  --card-7: ${v['--c7']};
+  --card-8: ${v['--c8']};
+
+  /* ── Status ── */
+  --color-success: ${v['--success']};
+  --color-warning: ${v['--warning']};
+  --color-error:   ${v['--error']};
+  --color-info:    ${v['--info']};
+
+  /* ── Typography ── */
+  --font-sans:   ${v['--font-sans']};
+  --font-serif:  ${v['--font-serif']};
+  --font-mono:   'JetBrains Mono', 'Courier New', monospace;
+  --font-size-base:    ${v['--sz']};
+  --font-weight-head:  ${v['--wt-h']};
+  --font-weight-body:  ${v['--wt-b']};
+  --line-height:       ${v['--lh']};
+  --letter-spacing:    ${v['--ls']};
+
+  /* ── Spacing ── */
+  --space-section-x: ${v['--px']};
+  --space-section-y: ${v['--py']};
+  --space-gap:       ${v['--gap']};
+
+  /* ── Border Radius ── */
+  --radius-xs:   ${v['--r-xs']};
+  --radius-sm:   ${v['--r-sm']};
+  --radius-md:   ${v['--r-md']};
+  --radius-lg:   ${v['--r-lg']};
+  --radius-xl:   ${v['--r-xl']};
+  --radius-2xl:  ${v['--r-2xl']};
+  --radius-full: 9999px;
+  --radius-btn:  ${v['--btn-radius']};  /* button shape language */
+
+  /* ── Border ── */
+  --border-width: ${v['--bw']};
+
+  /* ── Shadows ── */
+  --shadow-sm:    ${v['--sh-sm']};
+  --shadow-md:    ${v['--sh-md']};
+  --shadow-lg:    ${v['--sh-lg']};
+  --shadow-xl:    ${v['--sh-xl']};
+  --shadow-color: ${v['--sh-col']};
+
+  /* ── Effects ── */
+  --gradient-angle: ${v['--grad-angle']};
+
+  /* ── Transitions ── */
+  --tx-fast:   ${v['--tx-f']};
+  --tx-medium: ${v['--tx-m']};
+  --tx-spring: ${v['--tx-s']};
+}
+
+/* ── Dark mode override ──────────────────────────── */
+/* Uncomment and extend with your dark values        */
+/*
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0f0c17;
+    --color-fg: #ede5f8;
+    --color-surface: rgba(255, 255, 255, 0.05);
+  }
+}
+*/`;
+
+    } else if (type === 'tailwind') {
+      // Output actual resolved values, not var() references — works without CSS var support
+      const bw = v['--bw'] || '2px';
+      out = `/**
+ * PRISM — Tailwind CSS v3/v4 Config
+ * Generated ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+ *
+ * SETUP:
+ *   1. Add to tailwind.config.js → theme.extend
+ *   2. Or for Tailwind v4, paste the @theme block into your main CSS file
+ *
+ * HOW TO USE:
+ *   bg-bg          → background: ${v['--bg']}
+ *   text-fg        → color: ${v['--fg']}
+ *   bg-primary     → background: ${v['--primary']}
+ *   rounded-xl     → border-radius: ${v['--r-xl']}
+ *   shadow-md      → box-shadow: ${v['--sh-md']}
+ */
+
+/* ── Tailwind v3 ── tailwind.config.js ── */
+module.exports = {
+  theme: {
+    extend: {
+      colors: {
+        bg:        '${v['--bg']}',
+        fg:        '${v['--fg']}',
+        surface:   '${v['--surface']}',
+        primary: {
+          DEFAULT: '${v['--primary']}',
+          hover:   '${v['--primary-hover']}',
+        },
+        secondary: '${v['--secondary']}',
+        accent: {
+          DEFAULT: '${v['--accent']}',
+          alt:     '${v['--accent2']}',
+        },
+        border:    '${v['--border']}',
+        card: {
+          1: '${v['--c1']}', 2: '${v['--c2']}',
+          3: '${v['--c3']}', 4: '${v['--c4']}',
+          5: '${v['--c5']}', 6: '${v['--c6']}',
+          7: '${v['--c7']}', 8: '${v['--c8']}',
+        },
+        success: '${v['--success']}',
+        warning: '${v['--warning']}',
+        error:   '${v['--error']}',
+        info:    '${v['--info']}',
+      },
+      fontFamily: {
+        sans:  ['${fontSans}', 'system-ui', 'sans-serif'],
+        serif: ['${fontSerif}', 'Georgia', 'serif'],
+        mono:  ['JetBrains Mono', 'Courier New', 'monospace'],
+      },
+      fontSize: {
+        base: ['${v['--sz']}', { lineHeight: '${v['--lh']}' }],
+      },
+      borderRadius: {
+        xs:   '${v['--r-xs']}',
+        sm:   '${v['--r-sm']}',
+        md:   '${v['--r-md']}',
+        lg:   '${v['--r-lg']}',
+        xl:   '${v['--r-xl']}',
+        '2xl':'${v['--r-2xl']}',
+        btn:  '${v['--btn-radius']}',
+      },
+      borderWidth: {
+        DEFAULT: '${bw}',
+        brand:   '${bw}',
+      },
+      boxShadow: {
+        sm: '${v['--sh-sm']}',
+        md: '${v['--sh-md']}',
+        lg: '${v['--sh-lg']}',
+        xl: '${v['--sh-xl']}',
+      },
+      spacing: {
+        section: '${v['--py']}',
+        gap:     '${v['--gap']}',
+      },
+    },
+  },
+};
+
+/* ── Tailwind v4 ── paste into your main .css ── */
+/*
+@theme {
+  --color-bg:        ${v['--bg']};
+  --color-fg:        ${v['--fg']};
+  --color-primary:   ${v['--primary']};
+  --color-secondary: ${v['--secondary']};
+  --color-accent:    ${v['--accent']};
+  --color-success:   ${v['--success']};
+  --color-error:     ${v['--error']};
+  --radius-btn:      ${v['--btn-radius']};
+  --radius-xl:       ${v['--r-xl']};
+  --font-sans:       ${v['--font-sans']};
+  --font-serif:      ${v['--font-serif']};
+}
+*/`;
+
+    } else if (type === 'json') {
+      // DTCG (Design Token Community Group) format — W3C standard
+      const dtcg = {
+        "$schema": "https://tr.designtokens.org/format/",
+        "$metadata": { "tokenSetOrder": ["color","typography","radius","spacing","shadow","transition"] },
+        "color": {
+          "bg":         { "$value": v['--bg'],              "$type": "color" },
+          "fg":         { "$value": v['--fg'],              "$type": "color" },
+          "primary":    { "$value": v['--primary'],         "$type": "color" },
+          "primaryHover":{ "$value": v['--primary-hover'],  "$type": "color" },
+          "secondary":  { "$value": v['--secondary'],       "$type": "color" },
+          "accent":     { "$value": v['--accent'],          "$type": "color" },
+          "accentAlt":  { "$value": v['--accent2'],         "$type": "color" },
+          "border":     { "$value": v['--border'],          "$type": "color" },
+          "surface":    { "$value": v['--surface'],         "$type": "color" },
+          "card": {
+            "1":{ "$value": v['--c1'], "$type":"color" }, "2":{ "$value": v['--c2'], "$type":"color" },
+            "3":{ "$value": v['--c3'], "$type":"color" }, "4":{ "$value": v['--c4'], "$type":"color" },
+            "5":{ "$value": v['--c5'], "$type":"color" }, "6":{ "$value": v['--c6'], "$type":"color" },
+            "7":{ "$value": v['--c7'], "$type":"color" }, "8":{ "$value": v['--c8'], "$type":"color" },
+          },
+          "status": {
+            "success":{ "$value": v['--success'], "$type":"color" },
+            "warning":{ "$value": v['--warning'], "$type":"color" },
+            "error":  { "$value": v['--error'],   "$type":"color" },
+            "info":   { "$value": v['--info'],    "$type":"color" },
+          },
+        },
+        "typography": {
+          "fontSans":    { "$value": fontSans,      "$type": "fontFamily" },
+          "fontSerif":   { "$value": fontSerif,     "$type": "fontFamily" },
+          "sizeBase":    { "$value": v['--sz'],      "$type": "dimension" },
+          "weightHead":  { "$value": parseInt(v['--wt-h']||800), "$type": "fontWeight" },
+          "weightBody":  { "$value": parseInt(v['--wt-b']||400), "$type": "fontWeight" },
+          "lineHeight":  { "$value": parseFloat(v['--lh']||1.65), "$type": "number" },
+          "letterSpacing":{ "$value": v['--ls'],    "$type": "dimension" },
+        },
+        "borderRadius": {
+          "xs":   { "$value": v['--r-xs'],       "$type": "dimension" },
+          "sm":   { "$value": v['--r-sm'],       "$type": "dimension" },
+          "md":   { "$value": v['--r-md'],       "$type": "dimension" },
+          "lg":   { "$value": v['--r-lg'],       "$type": "dimension" },
+          "xl":   { "$value": v['--r-xl'],       "$type": "dimension" },
+          "2xl":  { "$value": v['--r-2xl'],      "$type": "dimension" },
+          "btn":  { "$value": v['--btn-radius'], "$type": "dimension" },
+        },
+        "spacing": {
+          "sectionX": { "$value": v['--px'],   "$type": "dimension" },
+          "sectionY": { "$value": v['--py'],   "$type": "dimension" },
+          "gap":      { "$value": v['--gap'],  "$type": "dimension" },
+          "borderWidth":{ "$value": v['--bw'], "$type": "dimension" },
+        },
+        "shadow": {
+          "sm":    { "$value": v['--sh-sm'], "$type": "shadow" },
+          "md":    { "$value": v['--sh-md'], "$type": "shadow" },
+          "lg":    { "$value": v['--sh-lg'], "$type": "shadow" },
+          "xl":    { "$value": v['--sh-xl'], "$type": "shadow" },
+          "color": { "$value": v['--sh-col'],"$type": "color" },
+        },
+        "transition": {
+          "fast":   { "$value": v['--tx-f'], "$type": "duration" },
+          "medium": { "$value": v['--tx-m'], "$type": "duration" },
+          "spring": { "$value": v['--tx-s'], "$type": "duration" },
+        },
+      };
+      out = JSON.stringify(dtcg, null, 2);
+
+    } else if (type === 'scss') {
+      out = `// PRISM Design Tokens — SCSS Variables
+// Generated ${new Date().toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})}
+// Usage: @use 'tokens' as t;  →  color: t.$color-primary;
+
+// Colors
+$color-bg:            ${v['--bg']};
+$color-fg:            ${v['--fg']};
+$color-primary:       ${v['--primary']};
+$color-primary-hover: ${v['--primary-hover']};
+$color-secondary:     ${v['--secondary']};
+$color-accent:        ${v['--accent']};
+$color-border:        ${v['--border']};
+$color-surface:       ${v['--surface']};
+$color-success:       ${v['--success']};
+$color-warning:       ${v['--warning']};
+$color-error:         ${v['--error']};
+$color-info:          ${v['--info']};
+
+$card-palette: (
+  1: ${v['--c1']}, 2: ${v['--c2']}, 3: ${v['--c3']}, 4: ${v['--c4']},
+  5: ${v['--c5']}, 6: ${v['--c6']}, 7: ${v['--c7']}, 8: ${v['--c8']},
+);
+
+// Typography
+$font-sans:         ${v['--font-sans']};
+$font-serif:        ${v['--font-serif']};
+$font-size-base:    ${v['--sz']};
+$font-weight-head:  ${v['--wt-h']};
+$font-weight-body:  ${v['--wt-b']};
+$line-height:       ${v['--lh']};
+$letter-spacing:    ${v['--ls']};
+
+// Border Radius
+$radius-xs:   ${v['--r-xs']};
+$radius-sm:   ${v['--r-sm']};
+$radius-md:   ${v['--r-md']};
+$radius-lg:   ${v['--r-lg']};
+$radius-xl:   ${v['--r-xl']};
+$radius-2xl:  ${v['--r-2xl']};
+$radius-btn:  ${v['--btn-radius']};
+
+// Spacing
+$space-x:   ${v['--px']};
+$space-y:   ${v['--py']};
+$gap:       ${v['--gap']};
+$border-w:  ${v['--bw']};
+
+// Shadows
+$shadow-sm: ${v['--sh-sm']};
+$shadow-md: ${v['--sh-md']};
+$shadow-lg: ${v['--sh-lg']};
+$shadow-xl: ${v['--sh-xl']};`;
+    }
+
+    const el = document.getElementById('em-code');
+    if (el) el.textContent = out;
+  }
+
+  function copyExport() {
+    const code = document.getElementById('em-code')?.textContent || '';
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.getElementById('em-copy-btn');
+      if (btn) { btn.textContent = '✓ Copied!'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = 'Copy to Clipboard'; btn.classList.remove('copied'); }, 2200); }
+    }).catch(() => { alert('Copy failed. Please select and copy the code manually.'); });
+  }
+
+  function downloadExport() {
+    const code = document.getElementById('em-code')?.textContent || '';
+    const extMap = { tailwind:'js', json:'json', scss:'scss', css:'css' };
+    const ext = extMap[currentExportTab] || 'css';
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([code], { type: 'text/plain' }));
+    a.download = `prism-tokens.${ext}`; a.click();
+  }
+
+  /* ── EDIT MODE ── */
+  function toggleEditMode() {
+    editMode = !editMode;
+    document.body.classList.toggle('edit-mode', editMode);
+    const btn = document.getElementById('btn-edit-mode');
+    if (btn) { btn.classList.toggle('active', editMode); btn.textContent = editMode ? '✏ Editing' : '✏ Edit Mode'; }
+    if (editMode) openDrawer('colors');
+  }
+
+  /* ── RIPPLE ── */
+  function addRipple(btn, e) {
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height) * 2;
+    const wave = document.createElement('span');
+    wave.className = 'ripple-wave';
+    wave.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px`;
+    btn.appendChild(wave);
+    setTimeout(() => wave.remove(), 700);
+  }
+
+  /* ── VALIDATION ── */
+  const VALIDATORS = {
+    email: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    password: v => v.length >= 8 && /[0-9]/.test(v) && /[a-zA-Z]/.test(v),
+    phone: v => /^\+?[\d\s\-()\u00B7]{8,}$/.test(v),
+    url: v => /^https?:\/\/.+/.test(v),
+  };
+
+  const VALID_MSGS = {
+    email: { ok:'Valid email ✓', err:'Enter a valid email address' },
+    password: { ok:'Strong password ✓', err:'Min 8 characters, at least one number' },
+    phone: { ok:'Valid number ✓', err:'Enter a valid phone number' },
+    url: { ok:'Valid URL ✓', err:'Must start with https://' },
+  };
+
+  function validateInput(inp) {
+    const type = inp.dataset.validate;
+    if (!type || !inp.value) return;
+    const ok = VALIDATORS[type]?.(inp.value) ?? true;
+    const ig = inp.closest('.ig');
+    if (!ig) return;
+    ig.classList.toggle('valid', ok);
+    ig.classList.toggle('invalid', !ok);
+    const hint = ig.querySelector('.hint');
+    if (hint) hint.textContent = ok ? VALID_MSGS[type]?.ok : VALID_MSGS[type]?.err;
+  }
+
+  /* ── SUBNAV SCROLL TRACKING ── */
+  function initScrollTracking() {
+    const secs = document.querySelectorAll('section[id]');
+    const pills = document.querySelectorAll('.snav-pill');
+    if (!secs.length || !pills.length) return;
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          pills.forEach(p => p.classList.toggle('active', p.dataset.section === entry.target.id));
+        }
+      });
+    }, { rootMargin: `-${56+48}px 0px -55% 0px`, threshold: 0 });
+    secs.forEach(s => obs.observe(s));
+  }
+
+  /* ── AI CHAT STUB ── */
+  // TODO (React + backend): This is a UI-only mockup. Replace with real streaming API call.
+  const AI_STUBS = [
+    "I'd love to help with that! Once PRISM Pro launches, I'll be able to apply that style instantly. Drop your email to get early access →",
+    "Great idea! That's on our roadmap for the AI version. In the meantime, try the closest preset and tweak the colors manually.",
+    "That colour palette sounds beautiful! I can see it working really well with a minimal sans-serif. AI will handle this automatically in Pro.",
+    "Nice direction! For now, try the Dark Luxury preset as a starting point — it's the closest to what you're describing.",
+  ];
+  let _stubIdx = 0;
+  function sendAIMessage() {
+    const input = document.getElementById('ai-input');
+    const thread = document.getElementById('ai-thread');
+    if (!input || !thread || !input.value.trim()) return;
+    const msg = input.value.trim();
+    input.value = '';
+    // User bubble
+    const userDiv = document.createElement('div');
+    userDiv.style.cssText = 'display:flex;gap:.65rem;align-items:flex-start;max-width:85%;align-self:flex-end;flex-direction:row-reverse;margin-left:auto';
+    userDiv.innerHTML = `<div style="width:1.8rem;height:1.8rem;border-radius:50%;background:var(--c3);display:flex;align-items:center;justify-content:center;font-size:.58rem;font-weight:900;color:#fff;flex-shrink:0">You</div><div style="background:var(--primary);color:var(--fg);border-radius:var(--r-lg) 0 var(--r-lg) var(--r-lg);padding:.75rem 1rem;font-family:var(--font-serif);font-size:.82rem;line-height:1.55">${msg}</div>`;
+    thread.appendChild(userDiv);
+    // Typing indicator
+    const typing = document.createElement('div');
+    typing.style.cssText = 'display:flex;gap:.65rem;align-items:center;max-width:85%';
+    typing.innerHTML = `<div style="width:1.8rem;height:1.8rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0">✦</div><div style="background:var(--fg);color:var(--bg);border-radius:0 var(--r-lg) var(--r-lg) var(--r-lg);padding:.65rem 1rem;font-size:.82rem;opacity:.7;font-family:var(--font-serif)">Thinking…</div>`;
+    thread.appendChild(typing);
+    thread.scrollTop = thread.scrollHeight;
+    setTimeout(() => {
+      typing.remove();
+      const aiDiv = document.createElement('div');
+      aiDiv.style.cssText = 'display:flex;gap:.65rem;align-items:flex-start;max-width:85%';
+      aiDiv.innerHTML = `<div style="width:1.8rem;height:1.8rem;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--accent2));display:flex;align-items:center;justify-content:center;font-size:.7rem;flex-shrink:0">✦</div><div style="background:var(--fg);color:var(--bg);border-radius:0 var(--r-lg) var(--r-lg) var(--r-lg);padding:.75rem 1rem;font-family:var(--font-serif);font-size:.82rem;line-height:1.55">${AI_STUBS[_stubIdx % AI_STUBS.length]}</div>`;
+      _stubIdx++;
+      thread.appendChild(aiDiv);
+      thread.scrollTop = thread.scrollHeight;
+    }, 1100);
+  }
+
+  /* ── INIT ── */
+  function init() {
+    Object.entries(D).forEach(([k,v]) => root.style.setProperty(k, v));
+    renderPanel('presets');
+    syncAllSwatches();
+    initScrollTracking();
+
+    // Toolbar buttons
+    document.getElementById('btn-presets')?.addEventListener('click', () => openDrawer('presets'));
+    document.getElementById('btn-edit-mode')?.addEventListener('click', toggleEditMode);
+    document.getElementById('btn-colors')?.addEventListener('click', () => openDrawer('colors'));
+    document.getElementById('btn-type')?.addEventListener('click', () => openDrawer('type'));
+    document.getElementById('btn-shape')?.addEventListener('click', () => openDrawer('shape'));
+    document.getElementById('btn-fx')?.addEventListener('click', () => openDrawer('fx'));
+    document.getElementById('btn-ix')?.addEventListener('click', () => openDrawer('ix'));
+    document.getElementById('btn-export')?.addEventListener('click', openExport);
+    document.getElementById('dw-close-btn')?.addEventListener('click', closeDrawer);
+
+    // Drawer tabs
+    document.getElementById('dw-tabs')?.addEventListener('click', e => {
+      const tab = e.target.closest('.dw-tab');
+      if (tab) switchDrawerPanel(tab.dataset.panel);
+    });
+
+    // Export modal
+    document.getElementById('em-close-btn')?.addEventListener('click', closeExport);
+    document.getElementById('export-modal')?.addEventListener('click', e => { if (e.target.id === 'export-modal') closeExport(); });
+    document.getElementById('em-copy-btn')?.addEventListener('click', copyExport);
+    document.getElementById('em-dl-btn')?.addEventListener('click', downloadExport);
+    document.getElementById('em-tabs')?.addEventListener('click', e => {
+      const t = e.target.closest('.em-tab');
+      if (t) switchExportTab(t.dataset.etype);
+    });
+
+    // Subnav pills
+    document.querySelectorAll('.snav-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        const sec = document.getElementById(pill.dataset.section);
+        if (sec) sec.scrollIntoView({ behavior: 'smooth' });
+      });
+    });
+
+    // Demo modal
+    document.getElementById('open-demo-modal')?.addEventListener('click', () => document.getElementById('demo-modal').style.display = 'flex');
+    document.getElementById('demo-modal-x')?.addEventListener('click', () => document.getElementById('demo-modal').style.display = 'none');
+    document.getElementById('demo-modal-cancel')?.addEventListener('click', () => document.getElementById('demo-modal').style.display = 'none');
+    document.getElementById('demo-modal-confirm')?.addEventListener('click', () => document.getElementById('demo-modal').style.display = 'none');
+    document.getElementById('demo-modal')?.addEventListener('click', e => { if (e.target.id === 'demo-modal') e.target.style.display = 'none'; });
+
+    // Tabs (navigation section)
+    document.getElementById('ntabs')?.addEventListener('click', e => {
+      const tab = e.target.closest('.ntab');
+      if (!tab) return;
+      document.querySelectorAll('.ntab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      ['nt1','nt2','nt3','nt4'].forEach(id => { const el = document.getElementById(id); if (el) el.style.display = id === tab.dataset.ntab ? '' : 'none'; });
+    });
+
+    // Dropdown
+    document.getElementById('dd-trigger')?.addEventListener('click', e => {
+      e.stopPropagation();
+      const menu = document.getElementById('dd-menu');
+      if (menu) menu.classList.toggle('show');
+    });
+    document.addEventListener('click', () => document.querySelectorAll('.dd-menu').forEach(m => m.classList.remove('show')));
+
+    // Toggles
+    ['tgl1','tgl2','tgl3'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => document.getElementById(id+'-t')?.classList.toggle('on'));
+    });
+
+    // Checkboxes
+    document.getElementById('chk1')?.addEventListener('click', () => {
+      const b = document.getElementById('chk1-b');
+      b?.classList.toggle('on');
+      if (b) b.textContent = b.classList.contains('on') ? '✓' : '';
+    });
+    document.getElementById('chk2')?.addEventListener('click', () => {
+      const b = document.getElementById('chk2-b');
+      b?.classList.toggle('on');
+      if (b) b.textContent = b.classList.contains('on') ? '✓' : '';
+    });
+
+    // Radios
+    ['rad1','rad2'].forEach(id => {
+      document.getElementById(id)?.addEventListener('click', () => {
+        ['rad1-b','rad2-b'].forEach(bid => document.getElementById(bid)?.classList.remove('on'));
+        document.getElementById(id+'-b')?.classList.add('on');
+      });
+    });
+
+    // Validation
+    document.querySelectorAll('[data-validate]').forEach(inp => {
+      inp.addEventListener('blur', () => validateInput(inp));
+    });
+
+    // Password toggle
+    const passToggle = document.getElementById('pass-toggle');
+    const passField = document.getElementById('fi-pass');
+    passToggle?.addEventListener('click', () => {
+      if (passField) passField.type = passField.type === 'password' ? 'text' : 'password';
+    });
+
+    // Range sliders (demo)
+    document.getElementById('opacity-range')?.addEventListener('input', function() {
+      document.getElementById('opacity-val').textContent = this.value + '%';
+    });
+    document.getElementById('scale-range')?.addEventListener('input', function() {
+      document.getElementById('scale-val').textContent = (0.5 + (this.value/100)*1.5).toFixed(1) + '×';
+    });
+
+    // Ripple buttons
+    document.querySelectorAll('.ripple-btn').forEach(btn => {
+      btn.addEventListener('click', e => addRipple(btn, e));
+    });
+
+    // Cursor controls (interaction section)
+    const cursorMap = { 'cursor-default':'default','cursor-dot-btn':'dot','cursor-cross-btn':'crosshair','cursor-pixel-btn':'pixel','cursor-none-btn':'none' };
+    Object.entries(cursorMap).forEach(([btnId, mode]) => {
+      document.getElementById(btnId)?.addEventListener('click', () => {
+        applyCursor(mode);
+        document.querySelectorAll('.tx-speed, #cursor-default,#cursor-dot-btn,#cursor-cross-btn,#cursor-pixel-btn,#cursor-none-btn').forEach(b => b.classList.remove('btn-filled'));
+        document.querySelectorAll('#cursor-default,#cursor-dot-btn,#cursor-cross-btn,#cursor-pixel-btn,#cursor-none-btn').forEach(b => b.classList.add('btn-outline'));
+        document.getElementById(btnId)?.classList.replace('btn-outline','btn-filled');
+      });
+    });
+
+    // Transition speed buttons
+    document.querySelectorAll('.tx-speed').forEach(btn => {
+      btn.addEventListener('click', () => {
+        applySpeed(btn.dataset.speed);
+        document.querySelectorAll('.tx-speed').forEach(b => { b.classList.remove('btn-filled'); b.classList.add('btn-outline'); });
+        btn.classList.replace('btn-outline','btn-filled');
+      });
+    });
+
+    // Mouse cursor follower
+    document.addEventListener('mousemove', e => {
+      const dot = document.getElementById('cursor-dot');
+      const ring = document.getElementById('cursor-ring');
+      const pix = document.getElementById('cursor-pixel');
+      if (document.body.classList.contains('cursor-dot')) {
+        dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+        ring.style.left = e.clientX + 'px'; ring.style.top = e.clientY + 'px';
+      }
+      if (document.body.classList.contains('cursor-pixel')) {
+        pix.style.left = e.clientX + 'px'; pix.style.top = e.clientY + 'px';
+      }
+    });
+
+    // Animate progress bars on load
+    setTimeout(() => {
+      document.querySelectorAll('.prog-bar').forEach(b => { const w = b.style.width; b.style.width = '0'; setTimeout(() => { b.style.width = w; }, 50); });
+    }, 400);
+
+    // ── THEME TOGGLE FAB ──
+    let isDark = false;
+    const LIGHT = { '--bg':'#ede5f8','--fg':'#1a0835','--border':'#1a0835','--border-sub':'rgba(26,8,53,.15)','--surface':'rgba(255,255,255,.5)','--muted-bg':'rgba(26,8,53,.06)','--sh-sm':'0 1px 4px rgba(0,0,0,.08)','--sh-md':'0 4px 16px rgba(0,0,0,.12)','--sh-lg':'0 12px 40px rgba(0,0,0,.16)','--sh-xl':'0 24px 64px rgba(0,0,0,.2)','--input-bg':'rgba(255,255,255,.5)','--input-border-col':'rgba(26,8,53,.15)' };
+    const DARK  = { '--bg':'#0f0c17','--fg':'#ede5f8','--border':'rgba(237,229,248,.25)','--border-sub':'rgba(237,229,248,.1)','--surface':'rgba(255,255,255,.05)','--muted-bg':'rgba(255,255,255,.04)','--sh-sm':'0 1px 4px rgba(0,0,0,.4)','--sh-md':'0 4px 16px rgba(0,0,0,.5)','--sh-lg':'0 12px 40px rgba(0,0,0,.6)','--sh-xl':'0 24px 64px rgba(0,0,0,.7)','--input-bg':'rgba(255,255,255,.06)','--input-border-col':'rgba(237,229,248,.15)' };
+    document.getElementById('theme-fab')?.addEventListener('click', () => {
+      isDark = !isDark;
+      document.body.classList.toggle('dark-mode', isDark);
+      const ico = document.getElementById('theme-fab-ico');
+      const lbl = document.getElementById('theme-fab-lbl');
+      if (ico) ico.textContent = isDark ? '☀' : '🌙';
+      if (lbl) lbl.textContent = isDark ? 'Light' : 'Dark';
+      // Apply token overrides so drawer stays in sync
+      const tokens = isDark ? DARK : LIGHT;
+      Object.entries(tokens).forEach(([k,v]) => { root.style.setProperty(k,v); syncDrawerInput(k,v); syncPageSwatch(k,v); });
+    });
+    // Type selector
+    document.querySelectorAll('.fb-type-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.fb-type-btn').forEach(b => {
+          b.style.background = 'transparent'; b.style.color = 'var(--fg)'; b.style.borderColor = 'var(--border-sub)';
+        });
+        btn.style.background = btn.dataset.type === 'bug' ? 'var(--error)' : btn.dataset.type === 'feature' ? 'var(--primary)' : 'var(--secondary)';
+        btn.style.color = '#fff'; btn.style.borderColor = btn.style.background;
+      });
+    });
+    // Filter buttons
+    document.querySelectorAll('.fb-filter').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.fb-filter').forEach(b => { b.classList.remove('active','btn-filled'); b.classList.add('btn-outline'); });
+        btn.classList.add('active','btn-filled'); btn.classList.remove('btn-outline');
+        const f = btn.dataset.filter;
+        document.querySelectorAll('.fb-item').forEach(item => { item.style.display = (f === 'all' || item.dataset.type === f) ? '' : 'none'; });
+      });
+    });
+    // Vote buttons
+    document.getElementById('fb-feed')?.addEventListener('click', e => {
+      const voteBtn = e.target.closest('.vote-btn');
+      if (voteBtn && !voteBtn.dataset.voted) {
+        voteBtn.dataset.voted = '1';
+        const span = voteBtn.querySelector('span');
+        if (span) span.textContent = parseInt(span.textContent) + 1;
+        voteBtn.style.background = 'var(--primary)'; voteBtn.style.color = 'var(--fg)';
+      }
+    });
+    // Submit feedback
+    document.getElementById('fb-submit')?.addEventListener('click', () => {
+      const title = document.getElementById('fb-title')?.value.trim();
+      if (!title) { document.getElementById('fb-title')?.classList.add('input-glow'); setTimeout(() => document.getElementById('fb-title')?.classList.remove('input-glow'), 1200); return; }
+      const type = document.querySelector('.fb-type-btn[style*="fff"]')?.dataset.type || 'other';
+      const desc = document.getElementById('fb-desc')?.value.trim();
+      const section = document.getElementById('fb-section')?.value;
+      const badge = type === 'bug' ? '<span class="badge badge-error">Bug</span>' : type === 'feature' ? '<span class="badge badge-primary">Feature</span>' : '<span class="badge badge-outline">General</span>';
+      const item = document.createElement('div');
+      item.className = 'fb-item'; item.dataset.type = type;
+      item.style.cssText = 'background:var(--surface);border:var(--bw) solid var(--border-sub);border-radius:var(--r-lg);padding:1.1rem 1.25rem;margin-bottom:.75rem;display:flex;gap:1rem;align-items:flex-start;animation:min-in .3s ease';
+      item.innerHTML = `<div style="display:flex;flex-direction:column;align-items:center;gap:.3rem;flex-shrink:0"><button class="vote-btn" style="font-size:.62rem;font-weight:800;background:var(--muted-bg);border:var(--bw) solid var(--border-sub);border-radius:var(--r-md);padding:.35rem .6rem;cursor:pointer;color:var(--fg)">▲<br><span>0</span></button></div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;gap:.6rem;margin-bottom:.3rem;flex-wrap:wrap">${badge}${section?`<span style="font-size:.62rem;opacity:.4;font-weight:700;text-transform:uppercase;letter-spacing:.06em">${section}</span>`:''}</div><div style="font-weight:800;font-size:.88rem;margin-bottom:.28rem">${title}</div>${desc?`<div style="font-family:var(--font-serif);font-size:.8rem;opacity:.7;line-height:1.55">${desc}</div>`:''}<div style="margin-top:.65rem;font-size:.62rem;opacity:.38">Posted just now</div></div>`;
+      document.getElementById('fb-feed')?.prepend(item);
+      if (document.getElementById('fb-title')) document.getElementById('fb-title').value = '';
+      if (document.getElementById('fb-desc')) document.getElementById('fb-desc').value = '';
+    });
+
+    // ── AI CHAT (UI mockup) ──
+    document.getElementById('ai-send')?.addEventListener('click', sendAIMessage);
+    document.getElementById('ai-input')?.addEventListener('keydown', e => { if (e.key === 'Enter') sendAIMessage(); });
+    document.getElementById('ai-notify-btn')?.addEventListener('click', () => {
+      const email = document.getElementById('ai-email')?.value;
+      if (email && email.includes('@')) {
+        document.getElementById('ai-notify-confirm').style.display = 'block';
+        document.getElementById('ai-notify-btn').textContent = '✓ Done';
+        document.getElementById('ai-notify-btn').style.opacity = '.6';
+      }
+    });
+
+    // TODO (React + backend): Replace sendAIMessage stub with real Anthropic API call
+    // TODO (React): Stream response token-by-token using SSE / ReadableStream
+    // TODO (React): Implement image upload with drag-drop, extract dominant colors via canvas API
+    // TODO (React): Font URL loader — fetch Google Fonts metadata, apply via @font-face
+    // TODO (React): Save preset to backend (user account) and localStorage fallback
+  }
+
+  document.addEventListener('DOMContentLoaded', init);
+
+  // Expose setVar for inline oninput swatch handlers
+  return { setVar, _hoverMode: null };
+})();
+</script>
+</body>
+</html>
