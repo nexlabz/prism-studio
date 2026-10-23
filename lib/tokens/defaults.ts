@@ -20,6 +20,7 @@ export const DEFAULT_TOKENS: TokenMap = {
   '--secondary': '#7b4fcc',
   '--accent': '#4b2280',
   '--accent2': '#d859f5',
+  '--on-primary': '#1a0835', // = --fg, which filled buttons used before this token existed
 
   // ── Surface / border / muted ──────────────────────────────────────────────
   '--surface': 'rgba(255,255,255,.5)',
@@ -48,6 +49,8 @@ export const DEFAULT_TOKENS: TokenMap = {
   '--font-sans': "'Syne',sans-serif",
   '--font-serif': "'Lora',Georgia,serif",
   '--font-mono': "'JetBrains Mono','Courier New',monospace",
+  '--font-display': "'Syne',sans-serif", // = --font-sans until a template sets its own
+  '--font-micro': "'Syne',sans-serif",
   '--sz': '16px',
   '--wt-h': '800',
   '--wt-b': '400',

@@ -4,6 +4,7 @@ import { useCallback } from 'react'
 
 import type { TokenMap } from '@/lib/tokens/schema'
 import { TOKEN_SECTION_MAP, scrollToSectionHighlight } from '@/lib/scrollHighlight'
+import type { PaletteKey } from '@/lib/templates'
 import { useTokenStore } from '@/stores/tokens'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -46,6 +47,8 @@ function toHexInputValue(val: string): string {
  */
 export function Swatch({ varName, label, size }: SwatchProps) {
   const value = useTokenStore((s) => s.tokens[varName])
+  // Templates can name their c1–c8 palette (e.g. Suture's Vanilla … Rust).
+  const name = useTokenStore((s) => s.paletteNames[varName as PaletteKey]) ?? label
   const setToken = useTokenStore((s) => s.setToken)
 
   const hexValue = toHexInputValue(value)
@@ -69,10 +72,10 @@ export function Swatch({ varName, label, size }: SwatchProps) {
             type="color"
             value={hexValue}
             onChange={handleChange}
-            aria-label={label}
+            aria-label={name}
           />
         </div>
-        <span className="sw-name-sm">{label}</span>
+        <span className="sw-name-sm">{name}</span>
         <span className="sw-var-sm">{varName}</span>
       </div>
     )
@@ -85,10 +88,10 @@ export function Swatch({ varName, label, size }: SwatchProps) {
           type="color"
           value={hexValue}
           onChange={handleChange}
-          aria-label={label}
+          aria-label={name}
         />
       </div>
-      <span className="sw-name">{label}</span>
+      <span className="sw-name">{name}</span>
       <span className="sw-var">{varName}</span>
     </div>
   )

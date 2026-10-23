@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -97,8 +98,8 @@ export function FeedbackBoardSection() {
   return (
     <section id="feedback-board">
       <div className="sec-header">
-        <div className="sec-lbl">12 — Community</div>
-        <h2 className="sec-title">FEEDBACK</h2>
+        <SectionLabel index="12" kicker="Community" />
+        <h2 className="sec-title">Feedback</h2>
         <p className="sec-desc">
           Found a bug? Have a feature idea? Vote on what others are saying, leave a comment, or flag something that&apos;s broken.
         </p>

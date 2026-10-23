@@ -20,10 +20,6 @@ interface UIStore {
   editMode: boolean
   toggleEditMode: () => void
 
-  // Which preset is currently applied (null = custom / no preset)
-  activePresetId: string | null
-  setActivePresetId: (id: string | null) => void
-
   // Export modal
   exportOpen: boolean
   setExportOpen: (open: boolean) => void
@@ -41,9 +37,6 @@ export const useUIStore = create<UIStore>()((set) => ({
 
   editMode: false,
   toggleEditMode: () => set((s) => ({ editMode: !s.editMode })),
-
-  activePresetId: 'purple', // matches the default token set
-  setActivePresetId: (id) => set({ activePresetId: id }),
 
   exportOpen: false,
   setExportOpen: (open) => set({ exportOpen: open }),

@@ -3,7 +3,6 @@
 import { useCallback } from 'react'
 import type { TokenMap } from '@/lib/tokens/schema'
 import { useTokenStore } from '@/stores/tokens'
-import { useUIStore } from '@/stores/ui'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -22,14 +21,12 @@ function toHexInputValue(val: string): string {
 
 function ColorRow({ label, tokenKey }: { label: string; tokenKey: keyof TokenMap }) {
   const { tokens, setToken } = useTokenStore()
-  const { setActivePresetId } = useUIStore()
   const value = tokens[tokenKey]
   const hexValue = toHexInputValue(value)
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     setToken(tokenKey, e.target.value)
-    setActivePresetId(null)
-  }, [tokenKey, setToken, setActivePresetId])
+  }, [tokenKey, setToken])
 
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '.6rem', marginBottom: '.5rem' }}>
@@ -61,6 +58,7 @@ const BRAND_COLORS: { label: string; key: keyof TokenMap }[] = [
   { label: 'Foreground',    key: '--fg' },
   { label: 'Primary',       key: '--primary' },
   { label: 'Primary Hover', key: '--primary-hover' },
+  { label: 'On Primary',    key: '--on-primary' },
   { label: 'Secondary',     key: '--secondary' },
   { label: 'Accent',        key: '--accent' },
   { label: 'Accent 2',      key: '--accent2' },

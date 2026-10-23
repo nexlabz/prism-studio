@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback } from 'react'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Ripple helper ──────────────────────────────────────────────────────────────
 
@@ -35,8 +36,8 @@ export function ButtonsSection() {
   return (
     <section id="buttons">
       <div className="sec-header">
-        <div className="sec-lbl">03 — Actions</div>
-        <h2 className="sec-title">BUTTONS</h2>
+        <SectionLabel index="03" kicker="Actions" />
+        <h2 className="sec-title">Buttons</h2>
         <p className="sec-desc">
           Change global button shape from the Shape tab. 9 style variants, 3 sizes, groups, and states.
         </p>

@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Ripple helper ──────────────────────────────────────────────────────────────
 
@@ -54,8 +55,8 @@ export function InteractionsSection() {
   return (
     <section id="interactions">
       <div className="sec-header">
-        <div className="sec-lbl">10 — Motion</div>
-        <h2 className="sec-title">INTERACTIONS</h2>
+        <SectionLabel index="10" kicker="Motion" />
+        <h2 className="sec-title">Interactions</h2>
         <p className="sec-desc">
           Configure hover effects, card animations, cursor styles, and click effects. All applied globally via the Interactions drawer tab.
         </p>

@@ -1,11 +1,13 @@
 // Server Component — all cards are static display.
 
+import { SectionLabel } from '@/components/canvas/SectionLabel'
+
 export function CardsSection() {
   return (
     <section id="cards">
       <div className="sec-header">
-        <div className="sec-lbl">05 — Components</div>
-        <h2 className="sec-title">CARDS &amp; LAYOUT</h2>
+        <SectionLabel index="05" kicker="Components" />
+        <h2 className="sec-title">Cards &amp; layout</h2>
       </div>
 
       {/* KPI / Stat Cards */}
