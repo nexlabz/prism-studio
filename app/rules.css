@@ -1,0 +1,174 @@
+/* ════════════════════════════════════════
+   COMPONENT STYLING RULES
+   A template's `rules` (lib/templates/types.ts) are written to <html> as
+   data-* attributes by TokenInjector. Every selector here keys on a
+   NON-default value, so templates without rules render exactly as before.
+   Colours come from tokens; template-only variables (--term-*, --gridline …)
+   always carry a fallback.
+════════════════════════════════════════ */
+
+/* ── primaryRole: fill ───────────────────────────────────────────────────────
+   --primary is a pale fill band. Thin accents move to --secondary, and text
+   on primary fills uses --on-primary instead of white. */
+:root[data-primary-role='fill']{--ink-accent:var(--secondary);--on-accent:var(--on-primary)}
+[data-primary-role='fill'] ::selection{background:var(--primary);color:var(--on-primary)}
+[data-primary-role='fill'] :focus-visible{outline:2px solid var(--ink-accent);outline-offset:3px}
+/* Fills that darken to --primary-hover on hover keep their label readable. */
+[data-primary-role='fill'] :is(.tb-export,.em-btn):hover{color:var(--primary)}
+[data-primary-role='fill'] .btn-gradient{color:var(--on-primary)}
+
+/* ── corners: square ─────────────────────────────────────────────────────────
+   Pill-shaped chrome squares off too. */
+[data-corners='square'] :is(.snav-pill,.tb-btn,.tb-export,.tb-icon,#theme-fab,.pill,.badge,.card-tag,
+  .price-badge,.toggle-t,.toggle-k,.prog-track,.prog-bar,.ava,.rad-box,.rad-box::after,.em-btn,.dw-radio,
+  .pg-btn,.mbn-ico,.mab-ico,.stat-ico,.tip,.skel,.skel-line){border-radius:0}
+[data-corners='square'] .sec-title::after{border-radius:0}
+
+/* ── labelFont: mono ─────────────────────────────────────────────────────────
+   System labels are uppercase mono in the dim ink, at full opacity for AA. */
+[data-label-font='mono'] :is(.sec-lbl,.glbl,.ig label,.stat-lbl,.price-plan,.prog-lbl,.prog-pct,.sw-name,
+  .sw-name-sm,.ix-label,.card-tag,.snav-pill,.tb-btn,.ntab,.mbn-lbl,.price-per,.ava-role){
+  font-family:var(--font-mono);font-weight:500;letter-spacing:var(--ls-label,.06em);text-transform:uppercase}
+[data-label-font='mono'] :is(.sec-lbl,.glbl,.ig label,.stat-lbl,.price-plan,.ix-label,.prog-pct,.ava-role){
+  color:var(--muted);opacity:1;font-size:var(--fs-label,.72rem)}
+[data-label-font='mono'] :is(.sw-var,.sw-var-sm){opacity:1;color:var(--muted)}
+
+/* ── sectionNumber: paren ────────────────────────────────────────────────────
+   `01 — Foundation` becomes `( 01 )  Foundation`. Markup: components/canvas/SectionLabel.tsx */
+[data-section-number='paren'] .sec-lbl{display:flex;align-items:baseline;gap:1rem}
+[data-section-number='paren'] .sec-num{white-space:pre;font-variant-numeric:tabular-nums}
+[data-section-number='paren'] .sec-num::before{content:'( '}
+[data-section-number='paren'] .sec-num::after{content:' )'}
+[data-section-number='paren'] .sec-sep{display:none}
+
+/* ── headingCase: sentence ───────────────────────────────────────────────────
+   Light, sentence-case headlines; the title marker becomes a blinking block. */
+[data-heading-case='sentence'] :is(.sec-title,.hero-h,.card-title,.modal-title,.m-title,.ava-name,.alert-title){
+  text-transform:none}
+[data-heading-case='sentence'] .sec-title{line-height:1.04;align-items:baseline}
+[data-heading-case='sentence'] .sec-title::after{width:.42em;height:.08em;margin-bottom:0;
+  background:var(--ink-accent);animation:prism-blink var(--blink-duration,1s) steps(2) infinite}
+[data-heading-case='sentence'] :is(.card-title,.modal-title){font-weight:500;letter-spacing:var(--ls-tight,-.01em)}
+/* Display numerals: dot-matrix face, rounded dots, tabular. */
+[data-heading-case='sentence'] :is(.stat-val,.price-amt){font-weight:800;font-variation-settings:'ROND' 100;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+@keyframes prism-blink{50%{opacity:0}}
+
+/* ── buttonLabel: bracket ────────────────────────────────────────────────────
+   `[Label]` in mono. Fill CTAs (filled, gradient, glow, 3D) keep sans and no
+   brackets, like Suture's vanilla primary. Brackets spread on hover. */
+[data-button-label='bracket'] .btn{text-transform:none;letter-spacing:0}
+[data-button-label='bracket'] .btn:not(.btn-filled,.btn-gradient,.btn-glow,.btn-3d){
+  font-family:var(--font-mono);font-weight:500;gap:.15rem}
+[data-button-label='bracket'] :is(.btn-filled,.btn-gradient,.btn-glow,.btn-3d){font-weight:600}
+[data-button-label='bracket'] .btn:not(.btn-filled,.btn-gradient,.btn-glow,.btn-3d,.btn-icon,.btn-loading,.btn-underline)::before{
+  content:'[';color:var(--muted);transition:translate var(--tx-f),color var(--tx-f)}
+[data-button-label='bracket'] .btn:not(.btn-filled,.btn-gradient,.btn-glow,.btn-3d,.btn-icon,.btn-loading,.btn-underline)::after{
+  content:']';color:var(--muted);transition:translate var(--tx-f),color var(--tx-f)}
+[data-button-label='bracket'] .btn:hover::before{translate:-2px 0;color:var(--ink-accent)}
+[data-button-label='bracket'] .btn:hover::after{translate:2px 0;color:var(--ink-accent)}
+[data-button-label='bracket'] .btn-ghost{color:var(--fg)}
+[data-button-label='bracket'] .btn-ghost:hover{background:var(--seg-off,var(--muted-bg))}
+
+/* ── buttonHover: stripe ─────────────────────────────────────────────────────
+   A striped bar loads left to right in 14 steps; --stripe is its colour. */
+[data-button-hover='stripe'] :is(.btn-filled,.btn-outline,.btn-danger,.btn-success){
+  border-width:var(--stroke-strong,1.5px);
+  background-image:repeating-linear-gradient(90deg,var(--stripe) 0 9px,transparent 9px 11px);
+  background-repeat:no-repeat;background-position:left center;background-size:0 100%;
+  transition:background-size .42s var(--steps-fill,steps(14)),color var(--tx-f),border-color var(--tx-f)}
+[data-button-hover='stripe'] :is(.btn-filled,.btn-outline,.btn-danger,.btn-success):is(:hover,:focus-visible){
+  background-size:102% 100%;box-shadow:none;filter:none}
+[data-button-hover='stripe'] .btn-filled{--stripe:var(--on-primary);background-color:var(--primary);
+  color:var(--on-primary);border-color:var(--secondary)}
+[data-button-hover='stripe'] .btn-filled:is(:hover,:focus-visible){background-color:var(--primary);color:var(--primary)}
+[data-button-hover='stripe'] .btn-outline{--stripe:var(--fg);border-color:var(--fg)}
+[data-button-hover='stripe'] .btn-outline:is(:hover,:focus-visible){background-color:transparent;color:var(--bg)}
+[data-button-hover='stripe'] .btn-danger{--stripe:var(--error);background-color:transparent;color:var(--error)}
+[data-button-hover='stripe'] .btn-danger:is(:hover,:focus-visible){color:var(--on-fail,#fff)}
+[data-button-hover='stripe'] .btn-success{--stripe:var(--success);background-color:transparent;color:var(--success)}
+[data-button-hover='stripe'] .btn-success:is(:hover,:focus-visible){color:var(--on-fixed,#fff)}
+
+/* ── status: bracket ─────────────────────────────────────────────────────────
+   Badges become status words: `[new]` `[fixed]` `[fail]` `[running]` `[open]`.
+   Colour is never the only signal; the word is always there. */
+[data-status='bracket'] .badge{height:18px;padding:0 .4rem;gap:.3rem;border:1px solid var(--border-sub);
+  background:transparent;color:var(--muted);font-size:var(--fs-micro,.62rem);font-weight:400;
+  letter-spacing:var(--ls-label,.06em);line-height:1}
+[data-status='bracket'] .badge::before{content:'[';opacity:.6}
+[data-status='bracket'] .badge::after{content:']';opacity:.6}
+[data-status='bracket'] .badge-primary{border-color:var(--secondary);background:var(--primary);color:var(--on-primary)}
+[data-status='bracket'] .badge-success{border-color:var(--success);background:var(--success);color:var(--on-fixed,#fff)}
+[data-status='bracket'] .badge-error{border-color:var(--error);background:var(--error);color:var(--on-fail,#fff)}
+[data-status='bracket'] .badge-warning{border:1px dashed var(--ink-accent);color:var(--ink-accent)}
+[data-status='bracket'] .badge-outline{border-color:var(--border);color:var(--fg)}
+/* Alerts: washes of the status colour, a bracket word before the title, no icon glyph. */
+[data-status='bracket'] .alert{border-width:1px}
+[data-status='bracket'] .alert-ico{display:none}
+[data-status='bracket'] .alert-title{font-family:var(--font-mono);font-weight:700;letter-spacing:var(--ls-label,.06em)}
+[data-status='bracket'] .alert-title::before{font-weight:700;margin-right:.5em}
+[data-status='bracket'] .alert-info{background:color-mix(in srgb,var(--info) 10%,transparent);border-color:color-mix(in srgb,var(--info) 45%,transparent)}
+[data-status='bracket'] .alert-info .alert-title::before{content:'[note]';color:var(--info)}
+[data-status='bracket'] .alert-success{background:color-mix(in srgb,var(--success) 16%,transparent);border-color:var(--success)}
+[data-status='bracket'] .alert-success .alert-title::before{content:'[fixed]';color:var(--success)}
+[data-status='bracket'] .alert-warning{background:transparent;border-style:dashed;border-color:var(--ink-accent)}
+[data-status='bracket'] .alert-warning .alert-title::before{content:'[running]';color:var(--ink-accent)}
+[data-status='bracket'] .alert-error{background:color-mix(in srgb,var(--error) 14%,transparent);border-color:var(--error)}
+[data-status='bracket'] .alert-error .alert-title::before{content:'[fail]';color:var(--error)}
+
+/* ── surface: frame ──────────────────────────────────────────────────────────
+   Neutral panels with a hairline and four corner brackets that step inward on
+   hover. Accents stay sparing, so palette backgrounds on panels are dropped. */
+@property --prism-bk{syntax:'<length>';inherits:false;initial-value:16px}
+[data-surface='frame'] :is(.card,.stat-card,.price-card,.testi,.spec-card,.tbl-wrap,.modal-box){
+  position:relative;isolation:isolate;border-color:var(--border-sub);box-shadow:none}
+[data-surface='frame'] :is(.card,.stat-card,.testi,.spec-card)[style]{background:var(--surface)!important}
+/* No photos: image placeholders become the dotted canvas. */
+[data-surface='frame'] .card-img-ph[style]{background:var(--muted-bg)
+  radial-gradient(circle,var(--griddot,rgba(128,128,128,.25)) 1px,transparent 1.2px) 0 0 / var(--dot-gap,16px) var(--dot-gap,16px)!important}
+[data-surface='frame'] .card:not(.card-border-spin):hover{transform:none;box-shadow:none;border-color:var(--border)}
+[data-surface='frame'] :is(.card:not(.card-border-spin),.stat-card,.price-card,.testi,.spec-card)::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:2;--fc:var(--border);
+  --prism-bk:var(--bk-rest,16px);
+  background:
+    linear-gradient(var(--fc),var(--fc)) top left / var(--prism-bk) 1.5px no-repeat,
+    linear-gradient(var(--fc),var(--fc)) top left / 1.5px var(--prism-bk) no-repeat,
+    linear-gradient(var(--fc),var(--fc)) top right / var(--prism-bk) 1.5px no-repeat,
+    linear-gradient(var(--fc),var(--fc)) top right / 1.5px var(--prism-bk) no-repeat,
+    linear-gradient(var(--fc),var(--fc)) bottom left / var(--prism-bk) 1.5px no-repeat,
+    linear-gradient(var(--fc),var(--fc)) bottom left / 1.5px var(--prism-bk) no-repeat,
+    linear-gradient(var(--fc),var(--fc)) bottom right / var(--prism-bk) 1.5px no-repeat,
+    linear-gradient(var(--fc),var(--fc)) bottom right / 1.5px var(--prism-bk) no-repeat;
+  transition:inset var(--tx-s),--prism-bk var(--tx-s)}
+[data-surface='frame'] :is(.card:not(.card-border-spin),.stat-card,.price-card,.testi,.spec-card):is(:hover,:focus-within)::before{
+  inset:7px;--prism-bk:var(--bk-hover,24px)}
+[data-surface='frame'] .price-card.feat::before{--fc:var(--bg)}
+
+/* ── code: terminal ──────────────────────────────────────────────────────────
+   Code and toasts sit on a terminal surface that stays dark in both themes. */
+[data-code='terminal'] :is(.code-block,.toast){color-scheme:dark;background:var(--term-bg,#191919);
+  color:var(--term-ink,#d9dae0);border:1px solid var(--term-line,#3a3a3a);box-shadow:var(--sh-lg);
+  font-family:var(--font-mono)}
+[data-code='terminal'] .toast-msg{font-weight:500}
+
+/* ── backdrop: grid / dots ─────────────────────────────────────────────────── */
+[data-backdrop='grid'] body{background-image:
+    linear-gradient(var(--gridline,rgba(128,128,128,.06)) 1px,transparent 1px),
+    linear-gradient(90deg,var(--gridline,rgba(128,128,128,.06)) 1px,transparent 1px);
+  background-size:var(--grid-size,48px) var(--grid-size,48px)}
+[data-backdrop='dots'] body{background-image:radial-gradient(circle,var(--griddot,rgba(128,128,128,.2)) 1px,transparent 1.2px);
+  background-size:var(--dot-gap,16px) var(--dot-gap,16px)}
+
+/* In dark the toolbar is the inverse (light) bar: its hairlines follow its own ink. */
+:root[data-theme='dark'] :is(.tb-btn,.tb-icon){background:color-mix(in srgb,currentColor 6%,transparent);
+  border-color:color-mix(in srgb,currentColor 22%,transparent)}
+:root[data-theme='dark'] :is(.tb-btn,.tb-icon):hover{background:color-mix(in srgb,currentColor 14%,transparent)}
+:root[data-theme='dark'] .tb-sep{background:color-mix(in srgb,currentColor 18%,transparent)}
+
+/* B-07: the select arrow follows the theme. */
+:root[data-theme='dark'] .select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23ffffff' opacity='.5'/%3E%3C/svg%3E")}
+
+@media (prefers-reduced-motion:reduce){
+  [data-heading-case='sentence'] .sec-title::after{animation:none}
+  [data-button-hover='stripe'] .btn{transition-duration:.01ms}
+}

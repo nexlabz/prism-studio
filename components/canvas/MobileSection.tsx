@@ -1,11 +1,13 @@
 // Server Component — phone frame mockup is entirely static.
 
+import { SectionLabel } from '@/components/canvas/SectionLabel'
+
 export function MobileSection() {
   return (
     <section id="mobile">
       <div className="sec-header">
-        <div className="sec-lbl">11 — Mobile</div>
-        <h2 className="sec-title">MOBILE</h2>
+        <SectionLabel index="11" kicker="Mobile" />
+        <h2 className="sec-title">Mobile</h2>
         <p className="sec-desc">
           Same design tokens power every mobile component. All colors, radii, and shadows flow through automatically.
         </p>

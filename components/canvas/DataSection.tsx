@@ -1,11 +1,13 @@
 // Server Component — avatars, data table, and tooltips are CSS-driven.
 
+import { SectionLabel } from '@/components/canvas/SectionLabel'
+
 export function DataSection() {
   return (
     <section id="data">
       <div className="sec-header">
-        <div className="sec-lbl">08 — Data</div>
-        <h2 className="sec-title">DATA DISPLAY</h2>
+        <SectionLabel index="08" kicker="Data" />
+        <h2 className="sec-title">Data display</h2>
       </div>
 
       {/* Avatars & Stacks */}

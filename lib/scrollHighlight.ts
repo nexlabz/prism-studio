@@ -16,6 +16,7 @@ export const TOKEN_SECTION_MAP: Record<string, string> = {
   '--bg': 'colors', '--fg': 'colors',
   '--primary': 'colors', '--primary-hover': 'colors',
   '--secondary': 'colors', '--accent': 'colors', '--accent2': 'colors',
+  '--on-primary': 'buttons',
   '--border': 'colors', '--border-sub': 'colors',
   '--surface': 'colors', '--muted': 'colors', '--muted-bg': 'colors',
   '--c1': 'colors', '--c2': 'colors', '--c3': 'colors', '--c4': 'colors',
@@ -27,6 +28,7 @@ export const TOKEN_SECTION_MAP: Record<string, string> = {
 
   // ── Typography ────────────────────────────────────────────────────────────
   '--font-sans': 'typography', '--font-serif': 'typography',
+  '--font-display': 'cards', '--font-micro': 'feedback-section',
   '--sz': 'typography', '--wt-h': 'typography', '--wt-b': 'typography',
   '--lh': 'typography', '--ls': 'typography',
 

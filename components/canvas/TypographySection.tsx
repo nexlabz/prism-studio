@@ -1,11 +1,13 @@
 // Server Component — pure display, no interactivity needed.
 
+import { SectionLabel } from '@/components/canvas/SectionLabel'
+
 export function TypographySection() {
   return (
     <section id="typography">
       <div className="sec-header">
-        <div className="sec-lbl">02 — Type</div>
-        <h2 className="sec-title">TYPOGRAPHY</h2>
+        <SectionLabel index="02" kicker="Type" />
+        <h2 className="sec-title">Typography</h2>
         <p className="sec-desc">
           Switch fonts from the Type tab. Dual-font system: display sans + editorial serif.
         </p>
@@ -13,13 +15,13 @@ export function TypographySection() {
 
       {/* Font specimen cards */}
       <div className="g2" style={{ gap: '1rem', marginBottom: '2rem' }}>
-        <div style={{ background: 'var(--c2)', borderRadius: 'var(--r-xl)', border: 'var(--bw) solid var(--border)', padding: '1.65rem' }}>
+        <div className="spec-card" style={{ background: 'var(--c2)', borderRadius: 'var(--r-xl)', border: 'var(--bw) solid var(--border)', padding: '1.65rem' }}>
           <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', opacity: 0.6, marginBottom: '.7rem' }}>SANS — DISPLAY</div>
           <div style={{ fontSize: '1.6rem', fontWeight: 800, lineHeight: 1, fontFamily: 'var(--font-sans)' }}>ABCDEFGHIJKLM</div>
           <div style={{ fontSize: '1.6rem', fontWeight: 800, lineHeight: 1.1, fontFamily: 'var(--font-sans)', marginBottom: '.65rem' }}>nopqrstuvwxyz</div>
           <div style={{ fontSize: '.72rem', opacity: 0.6 }}>Headings · Buttons · Labels · UI</div>
         </div>
-        <div style={{ background: 'var(--c6)', borderRadius: 'var(--r-xl)', border: 'var(--bw) solid var(--border)', padding: '1.65rem' }}>
+        <div className="spec-card" style={{ background: 'var(--c6)', borderRadius: 'var(--r-xl)', border: 'var(--bw) solid var(--border)', padding: '1.65rem' }}>
           <div style={{ fontSize: '.6rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '.12em', opacity: 0.6, marginBottom: '.7rem' }}>SERIF — EDITORIAL</div>
           <div style={{ fontSize: '1.6rem', fontWeight: 700, lineHeight: 1, fontFamily: 'var(--font-serif)' }}>ABCDEFGHIJKLM</div>
           <div style={{ fontSize: '1.6rem', fontWeight: 700, lineHeight: 1.1, fontFamily: 'var(--font-serif)', marginBottom: '.65rem' }}>nopqrstuvwxyz</div>

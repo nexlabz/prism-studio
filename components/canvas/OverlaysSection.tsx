@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Demo Modal ─────────────────────────────────────────────────────────────────
 // Backdrop is a <button> so it is a proper interactive element (satisfies a11y).
@@ -54,8 +55,8 @@ export function OverlaysSection() {
   return (
     <section id="overlays">
       <div className="sec-header">
-        <div className="sec-lbl">09 — Overlays</div>
-        <h2 className="sec-title">OVERLAYS</h2>
+        <SectionLabel index="09" kicker="Overlays" />
+        <h2 className="sec-title">Overlays</h2>
       </div>
 
       {modalOpen && <DemoModal onClose={() => setModalOpen(false)} />}

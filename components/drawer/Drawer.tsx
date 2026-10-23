@@ -1,10 +1,10 @@
 'use client'
 
-import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useUIStore, type DrawerTab } from '@/stores/ui'
 import { useTokenStore } from '@/stores/tokens'
+import { useMounted } from '@/lib/useMounted'
 import { PresetsPanel }      from './panels/PresetsPanel'
 import { ColorsPanel }       from './panels/ColorsPanel'
 import { TypePanel }         from './panels/TypePanel'
@@ -39,9 +39,7 @@ function renderPanel(tab: DrawerTab) {
 export function Drawer() {
   const { drawerOpen, setDrawerOpen, activeDrawerTab, setActiveDrawerTab } = useUIStore()
   const { resetAll } = useTokenStore()
-  const [mounted, setMounted] = useState(false)
-
-  useEffect(() => { setMounted(true) }, [])
+  const mounted = useMounted()
 
   if (!mounted) return null
 
@@ -129,9 +127,9 @@ export function Drawer() {
                       padding: '.65rem .25rem',
                       background: 'none',
                       border: 'none',
-                      borderBottom: isActive ? '2px solid var(--primary)' : '2px solid transparent',
+                      borderBottom: isActive ? '2px solid var(--ink-accent)' : '2px solid transparent',
                       cursor: 'pointer',
-                      color: isActive ? 'var(--primary)' : 'var(--fg)',
+                      color: isActive ? 'var(--ink-accent)' : 'var(--fg)',
                       fontSize: '.58rem',
                       fontWeight: 800,
                       textTransform: 'uppercase',

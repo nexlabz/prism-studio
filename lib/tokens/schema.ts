@@ -16,6 +16,8 @@ export const TokenMapSchema = z.object({
   '--secondary': z.string(),
   '--accent': z.string(),
   '--accent2': z.string(),
+  /** Text and icons placed on --primary (filled buttons, primary badges). */
+  '--on-primary': z.string(),
 
   // ── Surface / border / muted ──────────────────────────────────────────────
   '--surface': z.string(),
@@ -44,6 +46,10 @@ export const TokenMapSchema = z.object({
   '--font-sans': z.string(),
   '--font-serif': z.string(),
   '--font-mono': z.string(),
+  /** Display face: big numerals, stat values, emphasis words. */
+  '--font-display': z.string(),
+  /** Micro face: badges, status chips, tiny labels. */
+  '--font-micro': z.string(),
   '--sz': z.string(),
   '--wt-h': z.string(),
   '--wt-b': z.string(),

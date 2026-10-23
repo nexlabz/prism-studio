@@ -3,12 +3,11 @@
 import { useCallback } from 'react'
 import type { TokenMap } from '@/lib/tokens/schema'
 import { useTokenStore } from '@/stores/tokens'
-import { useUIStore } from '@/stores/ui'
 
 // ── Font catalogs ─────────────────────────────────────────────────────────────
 
 const FONTS_SANS = [
-  'Inter', 'DM Sans', 'Plus Jakarta Sans', 'Manrope', 'Outfit',
+  'Urbanist', 'Inter', 'DM Sans', 'Plus Jakarta Sans', 'Manrope', 'Outfit',
   'Sora', 'Space Grotesk', 'Nunito', 'Poppins', 'Raleway',
   'Geist', 'IBM Plex Sans', 'Figtree', 'Onest',
 ]
@@ -23,6 +22,21 @@ const FONTS_MONO = [
   'Geist Mono', 'JetBrains Mono', 'Fira Code', 'IBM Plex Mono',
   'Space Mono', 'Roboto Mono', 'Source Code Pro',
 ]
+
+const FONTS_DISPLAY = [
+  'Doto', 'Syne', 'Space Grotesk', 'Major Mono Display', 'Bricolage Grotesque',
+  'DM Serif Display', 'Unbounded',
+]
+
+const FONTS_MICRO = [
+  'Silkscreen', 'Pixelify Sans', 'VT323', 'Space Mono', 'JetBrains Mono', 'IBM Plex Mono',
+]
+
+const GENERIC_FAMILY: Partial<Record<keyof TokenMap, string>> = {
+  '--font-serif': 'serif',
+  '--font-mono': 'monospace',
+  '--font-micro': 'monospace',
+}
 
 // ── Type sliders ──────────────────────────────────────────────────────────────
 
@@ -89,7 +103,7 @@ function SliderRow({ slider }: { slider: TypeSlider }) {
         step={slider.step}
         value={numeric}
         onChange={handleChange}
-        style={{ width: '100%', accentColor: 'var(--primary)' }}
+        style={{ width: '100%', accentColor: 'var(--ink-accent)' }}
       />
     </div>
   )
@@ -97,15 +111,15 @@ function SliderRow({ slider }: { slider: TypeSlider }) {
 
 function FontSelect({ label, tokenKey, fonts }: { label: string; tokenKey: keyof TokenMap; fonts: string[] }) {
   const { tokens, setToken } = useTokenStore()
-  const { setActivePresetId } = useUIStore()
   const currentName = extractFontName(tokens[tokenKey])
+  // A template can ship a face that is not in the catalog (e.g. 'Urbanist Variable').
+  const options = fonts.includes(currentName) ? fonts : [currentName, ...fonts]
 
   const handleChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
     const family = e.target.value
     loadGoogleFont(family)
-    setToken(tokenKey, `'${family}', ${tokenKey === '--font-mono' ? 'monospace' : tokenKey === '--font-serif' ? 'serif' : 'sans-serif'}`)
-    setActivePresetId(null)
-  }, [tokenKey, setToken, setActivePresetId])
+    setToken(tokenKey, `'${family}', ${GENERIC_FAMILY[tokenKey] ?? 'sans-serif'}`)
+  }, [tokenKey, setToken])
 
   return (
     <div style={{ marginBottom: '.9rem' }}>
@@ -117,7 +131,7 @@ function FontSelect({ label, tokenKey, fonts }: { label: string; tokenKey: keyof
         onChange={handleChange}
         style={{ fontFamily: `'${currentName}', sans-serif` }}
       >
-        {fonts.map(f => (
+        {options.map(f => (
           <option key={f} value={f} style={{ fontFamily: `'${f}', sans-serif` }}>{f}</option>
         ))}
       </select>
@@ -145,6 +159,8 @@ export function TypePanel() {
         <FontSelect label="Sans-serif" tokenKey="--font-sans" fonts={FONTS_SANS} />
         <FontSelect label="Serif" tokenKey="--font-serif" fonts={FONTS_SERIF} />
         <FontSelect label="Monospace" tokenKey="--font-mono" fonts={FONTS_MONO} />
+        <FontSelect label="Display (numerals, emphasis)" tokenKey="--font-display" fonts={FONTS_DISPLAY} />
+        <FontSelect label="Micro (badges, status chips)" tokenKey="--font-micro" fonts={FONTS_MICRO} />
       </div>
 
       {/* Scale sliders */}

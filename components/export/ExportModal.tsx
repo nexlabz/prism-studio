@@ -1,11 +1,14 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTokenStore } from '@/stores/tokens'
 import { useUIStore } from '@/stores/ui'
-import { generateCSS, generateJSON, generateSCSS, generateShadcn, generateTailwind } from './exportGenerators'
+import { useMounted } from '@/lib/useMounted'
+import { findTemplate, resolveTheme, themePatch } from '@/lib/templates'
+import type { TokenMap } from '@/lib/tokens/schema'
+import { generateCSS, generateJSON, generateSCSS, generateShadcn, generateTailwind, type ExportContext } from './exportGenerators'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -21,10 +24,30 @@ const TABS: { id: ExportTab; label: string; ext: string }[] = [
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
+/**
+ * Light tokens plus, for a template with its own dark theme, the dark values.
+ * Edits made in either theme carry into that theme's block.
+ */
+function getExportInput(): { tokens: TokenMap; ctx: ExportContext } {
+  const s = useTokenStore.getState()
+  const template = findTemplate(s.templateId, s.customTemplates)
+  if (!template?.ownDark || !template.themes.dark) {
+    return { tokens: s.tokens, ctx: { template, vars: s.vars } }
+  }
+  const light = s.mode === 'light' ? s.tokens : { ...s.tokens, ...themePatch(template, 'light').tokens }
+  const darkFull = s.mode === 'dark' ? s.tokens : { ...s.tokens, ...themePatch(template, 'dark').tokens }
+  const dark: Partial<TokenMap> = {}
+  for (const key of Object.keys(template.themes.dark.tokens) as (keyof TokenMap)[]) dark[key] = darkFull[key]
+  return {
+    tokens: light,
+    ctx: { template, dark, vars: resolveTheme(template, 'light').vars, darkVars: template.themes.dark.vars },
+  }
+}
+
 function getCode(tab: ExportTab): string {
-  const tokens = useTokenStore.getState().tokens
+  const { tokens, ctx } = getExportInput()
   switch (tab) {
-    case 'css':      return generateCSS(tokens)
+    case 'css':      return generateCSS(tokens, ctx)
     case 'tailwind': return generateTailwind(tokens)
     case 'scss':     return generateSCSS(tokens)
     case 'json':     return generateJSON(tokens)
@@ -38,9 +61,7 @@ export function ExportModal() {
   const { exportOpen, setExportOpen } = useUIStore()
   const [activeTab, setActiveTab] = useState<ExportTab>('css')
   const [copied, setCopied]       = useState(false)
-  const [mounted, setMounted]     = useState(false)
-
-  useEffect(() => { setMounted(true) }, [])
+  const mounted                   = useMounted()
 
   if (!mounted) return null
 

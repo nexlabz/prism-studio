@@ -1,6 +1,7 @@
 // Server Component — interactivity is delegated entirely to <Swatch> (client).
 
 import { Swatch } from '@/components/ui/Swatch'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Data ──────────────────────────────────────────────────────────────────────
 
@@ -39,8 +40,8 @@ export function ColorsSection() {
   return (
     <section id="colors">
       <div className="sec-header">
-        <div className="sec-lbl">01 — Foundation</div>
-        <h2 className="sec-title">COLORS</h2>
+        <SectionLabel index="01" kicker="Foundation" />
+        <h2 className="sec-title">Colors</h2>
         <p className="sec-desc">
           Click any swatch to edit it inline. Changes cascade through the entire
           system instantly. Sync with the Colors tab in the drawer.

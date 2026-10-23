@@ -87,8 +87,8 @@ export function ShapePanel() {
                   all: 'unset',
                   display: 'block',
                   padding: '.75rem .5rem',
-                  background: isActive ? 'var(--primary)' : 'var(--surface)',
-                  border: `var(--bw) solid ${isActive ? 'var(--primary)' : 'var(--border-sub)'}`,
+                  background: isActive ? 'var(--ink-accent)' : 'var(--surface)',
+                  border: `var(--bw) solid ${isActive ? 'var(--ink-accent)' : 'var(--border-sub)'}`,
                   borderRadius: 'var(--r-md)',
                   cursor: 'pointer',
                   textAlign: 'center',
@@ -133,7 +133,7 @@ export function ShapePanel() {
                   const v = parseFloat(e.target.value)
                   setToken(key, v === 0 ? '0' : `${v}rem`)
                 }}
-                style={{ width: '100%', accentColor: 'var(--primary)' }}
+                style={{ width: '100%', accentColor: 'var(--ink-accent)' }}
               />
             </div>
           )
@@ -156,7 +156,7 @@ export function ShapePanel() {
               const v = parseInt(e.target.value, 10)
               setToken('--btn-radius', v >= 9999 ? '9999px' : v === 0 ? '0' : `${v}px`)
             }}
-            style={{ width: '100%', accentColor: 'var(--primary)' }}
+            style={{ width: '100%', accentColor: 'var(--ink-accent)' }}
           />
         </div>
       </div>
@@ -182,7 +182,7 @@ export function ShapePanel() {
                 step={step}
                 value={numVal}
                 onChange={e => setToken(key, `${e.target.value}${unit}`)}
-                style={{ width: '100%', accentColor: 'var(--primary)' }}
+                style={{ width: '100%', accentColor: 'var(--ink-accent)' }}
               />
             </div>
           )

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -33,8 +34,8 @@ export function NavigationSection() {
   return (
     <section id="navigation">
       <div className="sec-header">
-        <div className="sec-lbl">06 — Wayfinding</div>
-        <h2 className="sec-title">NAVIGATION</h2>
+        <SectionLabel index="06" kicker="Wayfinding" />
+        <h2 className="sec-title">Navigation</h2>
       </div>
 
       {/* Tabs */}

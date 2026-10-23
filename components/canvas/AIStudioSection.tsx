@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState } from 'react'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -79,8 +80,8 @@ export function AIStudioSection() {
   return (
     <section id="ai-studio">
       <div className="sec-header">
-        <div className="sec-lbl">13 — AI Studio</div>
-        <h2 className="sec-title">AI DESIGN<br />ASSISTANT</h2>
+        <SectionLabel index="13" kicker="AI Studio" />
+        <h2 className="sec-title">AI design<br />assistant</h2>
         <p className="sec-desc">
           Describe a vibe, paste a font URL, upload an image for color extraction — the AI handles the rest. <strong>Coming in Pro.</strong>
         </p>

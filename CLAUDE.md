@@ -96,7 +96,7 @@ prism/
       exportGenerators.ts     ← CSS / Tailwind / SCSS / JSON / shadCN output
   stores/
     tokens.ts                 ← Zustand store + localStorage persist
-    presets.ts                ← All 10 built-in preset definitions
+    presets.ts                ← The 10 legacy presets (wrapped as templates by lib/templates/legacy.ts)
     ui.ts                     ← Drawer open/close, active tab, edit mode
   lib/
     tokens/
@@ -170,6 +170,30 @@ useEffect(() => {
   return unsub
 }, [])
 ```
+
+---
+
+## Templates
+
+A template is a complete design system you start from: `lib/templates/`.
+
+| File | What |
+|---|---|
+| `types.ts` | `Template`: light + dark `TemplateTheme` (PRISM `tokens` + extra CSS `vars`), `fonts`, component `rules`, palette names, source |
+| `suture.ts` | **Suture** (ledger / terminal), the default and first in the picker. Values from `AviOfLagos/suture` `packages/ui/src/tokens.css` |
+| `legacy.ts` | `fromPreset()` wraps the 10 presets; `LEGACY_DARK` is the old generic dark patch, so they render exactly as before |
+| `index.ts` | `TEMPLATES` (picker order), `resolveTheme()`, `themePatch()`, `ruleAttributes()` |
+
+- The store (`stores/tokens.ts`, persist v3) holds `tokens`, `vars`, `rules`, `templateId`, `mode`,
+  `edited` and `customTemplates`. Use `applyTemplate()`, `setMode()`, `resetAll()`; `applyPreset()` is gone.
+- `TokenInjector` writes tokens + vars inline on `<html>`, rules as `data-*` attributes and the theme as
+  `data-theme`. `app/rules.css` restyles the canvas for each non-default rule (bracket buttons, mono
+  labels, `( 01 )` numbers, frames, terminal code, square corners, grid backdrop).
+- Thin accents use `--ink-accent` and text on primary fills `--on-accent` / `--on-primary`, never
+  `var(--primary)` / `#fff` directly — a template whose primary is a pale fill (`primaryRole: 'fill'`) remaps them.
+- Template fonts are self-hosted with fontsource and imported in `app/layout.tsx`.
+- To add a template: write `lib/templates/<id>.ts`, add it to `TEMPLATES`. New rules go in
+  `ComponentRules` + `DEFAULT_RULES` + `RULE_ATTRS` + `app/rules.css`, with the default reproducing today's look.
 
 ---
 

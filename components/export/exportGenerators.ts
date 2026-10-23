@@ -6,6 +6,7 @@
 
 import type { TokenMap } from '@/lib/tokens/schema'
 import { hexToHsl } from '@/lib/tokens/converters'
+import type { CssVarMap, Template } from '@/lib/templates'
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -17,30 +18,114 @@ function datestamp(): string {
   return new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
 }
 
-// ── CSS Custom Properties ─────────────────────────────────────────────────────
+// ── Template context ──────────────────────────────────────────────────────────
 
-export function generateCSS(v: TokenMap): string {
+/** What the CSS export needs beyond the light tokens. Built by ExportModal from the store. */
+export interface ExportContext {
+  template?: Template
+  /** Dark values for the tokens the template's own dark theme changes. */
+  dark?: Partial<TokenMap>
+  /** Template-only variables, light theme. */
+  vars?: CssVarMap
+  /** Template-only variables the dark theme changes. */
+  darkVars?: CssVarMap
+}
+
+/** Exported names for the tokens a dark block can override. */
+const CSS_NAMES: Partial<Record<keyof TokenMap, string>> = {
+  '--bg': '--color-bg', '--fg': '--color-fg',
+  '--primary': '--color-primary', '--primary-hover': '--color-primary-hover', '--on-primary': '--color-on-primary',
+  '--secondary': '--color-secondary', '--accent': '--color-accent', '--accent2': '--color-accent-alt',
+  '--border': '--color-border', '--border-sub': '--color-border-subtle',
+  '--surface': '--color-surface', '--muted': '--color-muted', '--muted-bg': '--color-muted-bg',
+  '--success': '--color-success', '--warning': '--color-warning', '--error': '--color-error', '--info': '--color-info',
+  '--sh-sm': '--shadow-sm', '--sh-md': '--shadow-md', '--sh-lg': '--shadow-lg', '--sh-xl': '--shadow-xl',
+  '--sh-col': '--shadow-color',
+}
+
+function declarations(pairs: Array<[string, string | undefined]>, indent: string): string {
+  return pairs.filter((p): p is [string, string] => p[1] !== undefined).map(([k, val]) => `${indent}${k}: ${val};`).join('\n')
+}
+
+function fontImports(v: TokenMap, template?: Template): string {
+  const bundled = template?.fonts?.filter(f => f.source === 'fontsource' && f.importPath)
+  if (bundled && bundled.length > 0) {
+    const pkgs = bundled.map(f => f.importPath?.split('/').slice(0, 2).join('/')).join(' ')
+    return `/* Fonts (self-hosted): npm i ${pkgs} */\n${bundled.map(f => `@import '${f.importPath}'; /* ${f.role}: ${f.use} */`).join('\n')}\n`
+  }
   const sans = fontName(v['--font-sans'])
   const serif = fontName(v['--font-serif'])
+  return `/* @import url('https://fonts.googleapis.com/css2?family=${sans.replace(/ /g, '+')}:wght@400;600;700;800&family=${serif.replace(/ /g, '+')}:wght@400;700&display=swap'); */\n`
+}
+
+function systemVarsBlock(ctx: ExportContext): string {
+  if (!ctx.vars || Object.keys(ctx.vars).length === 0) return ''
+  return `
+/* ── System variables (${ctx.template?.name ?? 'template'}) ── */
+:root {
+${declarations(Object.entries(ctx.vars), '  ')}
+}
+`
+}
+
+function darkBlock(ctx: ExportContext): string {
+  if (!ctx.dark) {
+    return `
+/* ── Dark mode stub ── */
+/*
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0f0c17;
+    --color-fg: #ede5f8;
+    --color-surface: rgba(255, 255, 255, 0.05);
+  }
+}
+*/`
+  }
+  const pairs: Array<[string, string | undefined]> = [
+    ...(Object.entries(ctx.dark) as Array<[keyof TokenMap, string]>)
+      .filter(([k]) => CSS_NAMES[k])
+      .map(([k, val]): [string, string] => [CSS_NAMES[k] as string, val]),
+    ...Object.entries(ctx.darkVars ?? {}),
+  ]
+  return `
+/* ── Dark theme (${ctx.template?.name ?? 'template'}) ──
+   Follows the OS unless data-theme="light|dark" is set on <html> or any subtree. */
+[data-theme='dark'] {
+  color-scheme: dark;
+${declarations(pairs, '  ')}
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+${declarations(pairs, '    ')}
+  }
+}`
+}
+
+// ── CSS Custom Properties ─────────────────────────────────────────────────────
+
+export function generateCSS(v: TokenMap, ctx: ExportContext = {}): string {
   return `/**
  * PRISM Design Tokens — CSS Custom Properties
- * Generated ${datestamp()}
+ * Generated ${datestamp()}${ctx.template ? `\n * Template: ${ctx.template.name}${ctx.template.source ? ` (${ctx.template.source.label})` : ''}` : ''}
  */
 
-/* @import url('https://fonts.googleapis.com/css2?family=${sans.replace(/ /g, '+')}:wght@400;600;700;800&family=${serif.replace(/ /g, '+')}:wght@400;700&display=swap'); */
-
+${fontImports(v, ctx.template)}
 :root {
   /* ── Colors ── */
   --color-bg:            ${v['--bg']};
   --color-fg:            ${v['--fg']};
   --color-primary:       ${v['--primary']};
   --color-primary-hover: ${v['--primary-hover']};
+  --color-on-primary:    ${v['--on-primary']};
   --color-secondary:     ${v['--secondary']};
   --color-accent:        ${v['--accent']};
   --color-accent-alt:    ${v['--accent2']};
   --color-border:        ${v['--border']};
   --color-border-subtle: ${v['--border-sub']};
   --color-surface:       ${v['--surface']};
+  --color-muted:         ${v['--muted']};
   --color-muted-bg:      ${v['--muted-bg']};
 
   /* ── Card Palette ── */
@@ -59,6 +144,8 @@ export function generateCSS(v: TokenMap): string {
   --font-sans:        ${v['--font-sans']};
   --font-serif:       ${v['--font-serif']};
   --font-mono:        ${v['--font-mono']};
+  --font-display:     ${v['--font-display']};
+  --font-micro:       ${v['--font-micro']};
   --font-size-base:   ${v['--sz']};
   --font-weight-head: ${v['--wt-h']};
   --font-weight-body: ${v['--wt-b']};
@@ -98,17 +185,7 @@ export function generateCSS(v: TokenMap): string {
   --tx-medium: ${v['--tx-m']};
   --tx-spring: ${v['--tx-s']};
 }
-
-/* ── Dark mode stub ── */
-/*
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-bg: #0f0c17;
-    --color-fg: #ede5f8;
-    --color-surface: rgba(255, 255, 255, 0.05);
-  }
-}
-*/`
+${systemVarsBlock(ctx)}${darkBlock(ctx)}`
 }
 
 // ── Tailwind Config ───────────────────────────────────────────────────────────
@@ -127,7 +204,7 @@ module.exports = {
     extend: {
       colors: {
         bg: '${v['--bg']}', fg: '${v['--fg']}', surface: '${v['--surface']}',
-        primary: { DEFAULT: '${v['--primary']}', hover: '${v['--primary-hover']}' },
+        primary: { DEFAULT: '${v['--primary']}', hover: '${v['--primary-hover']}', foreground: '${v['--on-primary']}' },
         secondary: '${v['--secondary']}',
         accent: { DEFAULT: '${v['--accent']}', alt: '${v['--accent2']}' },
         border: '${v['--border']}',
@@ -141,7 +218,9 @@ module.exports = {
       fontFamily: {
         sans: ['${sans}', 'system-ui', 'sans-serif'],
         serif: ['${serif}', 'Georgia', 'serif'],
-        mono: ['JetBrains Mono', 'Courier New', 'monospace'],
+        mono: ['${fontName(v['--font-mono'])}', 'Courier New', 'monospace'],
+        display: ['${fontName(v['--font-display'])}', 'monospace'],
+        micro: ['${fontName(v['--font-micro'])}', 'monospace'],
       },
       fontSize: { base: ['${v['--sz']}', { lineHeight: '${v['--lh']}' }] },
       borderRadius: {
@@ -234,6 +313,7 @@ export function generateJSON(v: TokenMap): string {
       fg:           { $value: v['--fg'],           $type: 'color' },
       primary:      { $value: v['--primary'],      $type: 'color' },
       primaryHover: { $value: v['--primary-hover'],$type: 'color' },
+      onPrimary:    { $value: v['--on-primary'],   $type: 'color' },
       secondary:    { $value: v['--secondary'],    $type: 'color' },
       accent:       { $value: v['--accent'],       $type: 'color' },
       accentAlt:    { $value: v['--accent2'],      $type: 'color' },
@@ -255,6 +335,9 @@ export function generateJSON(v: TokenMap): string {
     typography: {
       fontSans:     { $value: fontName(v['--font-sans']),             $type: 'fontFamily' },
       fontSerif:    { $value: fontName(v['--font-serif']),            $type: 'fontFamily' },
+      fontMono:     { $value: fontName(v['--font-mono']),             $type: 'fontFamily' },
+      fontDisplay:  { $value: fontName(v['--font-display']),          $type: 'fontFamily' },
+      fontMicro:    { $value: fontName(v['--font-micro']),            $type: 'fontFamily' },
       sizeBase:     { $value: v['--sz'],                              $type: 'dimension' },
       weightHead:   { $value: parseInt(v['--wt-h'] || '800', 10),    $type: 'fontWeight' },
       weightBody:   { $value: parseInt(v['--wt-b'] || '400', 10),    $type: 'fontWeight' },

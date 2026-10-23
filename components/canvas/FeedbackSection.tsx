@@ -1,12 +1,14 @@
 // Server Component — alerts, badges, progress bars, spinners, skeletons are all static CSS.
 // Note: the section id is "feedback" (status feedback), distinct from "feedback-board" (community board).
 
+import { SectionLabel } from '@/components/canvas/SectionLabel'
+
 export function FeedbackSection() {
   return (
     <section id="feedback-section">
       <div className="sec-header">
-        <div className="sec-lbl">07 — Status</div>
-        <h2 className="sec-title">FEEDBACK</h2>
+        <SectionLabel index="07" kicker="Status" />
+        <h2 className="sec-title">Feedback</h2>
       </div>
 
       <div className="g2" style={{ gap: '2rem' }}>

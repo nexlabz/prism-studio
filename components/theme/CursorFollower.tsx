@@ -2,13 +2,14 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useMounted } from '@/lib/useMounted'
 
 // ── Component ──────────────────────────────────────────────────────────────────
 // Fixes B-05: renders outside modal DOM so cursor dot/ring always appear on top.
 // Portal target: document.body — same level as the Drawer portal.
 
 export function CursorFollower() {
-  const [mounted, setMounted] = useState(false)
+  const mounted = useMounted()
   const [visible, setVisible] = useState(false)
   const dotRef  = useRef<HTMLDivElement>(null)
   const ringRef = useRef<HTMLDivElement>(null)
@@ -19,8 +20,6 @@ export function CursorFollower() {
   const frameId = useRef<number>(0)
 
   useEffect(() => {
-    setMounted(true)
-
     const onMove = (e: MouseEvent) => {
       if (!visible) setVisible(true)
       mouse.current = { x: e.clientX, y: e.clientY }
@@ -75,7 +74,7 @@ export function CursorFollower() {
           marginLeft: '-3px',
           marginTop: '-3px',
           borderRadius: '50%',
-          background: 'var(--primary)',
+          background: 'var(--ink-accent)',
           pointerEvents: 'none',
           zIndex: 99999,
           opacity,
@@ -96,7 +95,7 @@ export function CursorFollower() {
           marginLeft: '-14px',
           marginTop: '-14px',
           borderRadius: '50%',
-          border: '1.5px solid var(--primary)',
+          border: '1.5px solid var(--ink-accent)',
           pointerEvents: 'none',
           zIndex: 99998,
           opacity: opacity * 0.55,

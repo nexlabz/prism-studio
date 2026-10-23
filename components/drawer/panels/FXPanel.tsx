@@ -106,7 +106,7 @@ export function FXPanel() {
           step={1}
           value={blurVal}
           onChange={handleBlur}
-          style={{ width: '100%', accentColor: 'var(--primary)', marginBottom: '.85rem' }}
+          style={{ width: '100%', accentColor: 'var(--ink-accent)', marginBottom: '.85rem' }}
         />
         {/* Glass preview */}
         <div style={{ position: 'relative', borderRadius: 'var(--r-md)', overflow: 'hidden', height: '5rem', background: 'linear-gradient(135deg, var(--primary), var(--accent2))' }}>
@@ -131,7 +131,7 @@ export function FXPanel() {
           step={1}
           value={gradAngle}
           onChange={handleGradAngle}
-          style={{ width: '100%', accentColor: 'var(--primary)', marginBottom: '.85rem' }}
+          style={{ width: '100%', accentColor: 'var(--ink-accent)', marginBottom: '.85rem' }}
         />
         {/* Gradient preview */}
         <div style={{ height: '3rem', borderRadius: 'var(--r-md)', background: `linear-gradient(${gradAngle}deg, var(--primary), var(--accent2))` }} />

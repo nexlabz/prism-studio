@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import { SectionLabel } from '@/components/canvas/SectionLabel'
 
 // ── Validation ─────────────────────────────────────────────────────────────────
 
@@ -54,8 +55,8 @@ export function FormsSection() {
   return (
     <section id="forms">
       <div className="sec-header">
-        <div className="sec-lbl">04 — Inputs</div>
-        <h2 className="sec-title">FORM CONTROLS</h2>
+        <SectionLabel index="04" kicker="Inputs" />
+        <h2 className="sec-title">Form controls</h2>
         <p className="sec-desc">Real validation on blur. 6 input style variants. All controls interactive.</p>
       </div>
 
